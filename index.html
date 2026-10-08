@@ -16,44 +16,21 @@
       href="hero-classroom.jpg"
       media="(min-width: 1024px)"
     />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tier-1 build: compiled Tailwind utility layer replaces the runtime
+         cdn.tailwindcss.com JIT (no in-browser recompilation, no FOUC, works
+         offline). Generated from the exact class inventory of this file with
+         the same brand/gold/gh color tokens as the original tailwind.config. -->
+    <link rel="stylesheet" href="tailwind.compiled.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css"
     />
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: { sans: ["Inter", "sans-serif"] },
-            colors: {
-              brand: {
-                100: "#d9ebff",
-                200: "#bcdcff",
-                300: "#8ec4ff",
-                400: "#59a1ff",
-                500: "#337dff",
-                600: "#1a5cf5",
-                700: "#1447d1",
-                800: "#163ba6",
-                900: "#173682",
-                950: "#0f1f4a",
-              },
-              gold: {
-                500: "#f5b301",
-                600: "#d89c00",
-              },
-              gh: {
-                red: "#CE1126",
-                gold: "#FCD116",
-                green: "#006B3F",
-                black: "#000000",
-              },
-            },
-          },
-        },
-      };
-    </script>
+    <noscript>
+      <style>
+        /* graceful fallback if JS is disabled */
+        .fade-in { animation: none; }
+      </style>
+    </noscript>
     <style>
       body {
         font-family: "Inter", sans-serif;
