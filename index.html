@@ -736,31 +736,28 @@
         pointer-events: none;
       }
       /* Login role selector chips (Figma concept style) */
-      /* Role chips live on the bright login panel → black text,
-         gold reserved for the dimmed/black selected state only */
       .role-btn {
-        background: #ffffff;
-        border-color: rgba(15, 31, 74, 0.14) !important;
-        color: #000000;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 6px 16px -8px rgba(15, 31, 74, 0.25);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.14) !important;
+        color: #e2e8f0;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
         transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
       }
       .role-btn:hover {
-        border-color: rgba(15, 31, 74, 0.35) !important;
-        background: #f6f8fd !important;
+        border-color: rgba(252, 209, 22, 0.55) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
         transform: translateY(-2px);
       }
       .role-btn.is-selected {
         border-color: var(--edu-gold) !important;
-        background: linear-gradient(160deg, #0b1437, #060c1f) !important;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 26px -10px rgba(2, 6, 23, 0.7);
+        background: linear-gradient(160deg, rgba(252, 209, 22, 0.16), rgba(20, 71, 209, 0.28)) !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 10px 26px -10px rgba(252, 209, 22, 0.35);
       }
-      .role-btn .role-kicker { color: #475569 !important; }
-      .role-btn .role-title { color: #000000 !important; }
-      .role-btn .role-desc { color: #334155 !important; }
-      .role-btn.is-selected .role-kicker { color: var(--edu-gold) !important; }
-      .role-btn.is-selected .role-title { color: #ffffff !important; }
-      .role-btn.is-selected .role-desc { color: rgba(226, 232, 240, 0.75) !important; }
+      .role-btn .role-kicker { color: var(--edu-gold) !important; }
+      .role-btn .role-title { color: #fff !important; }
+      .role-btn .role-desc { color: rgba(226, 232, 240, 0.6) !important; }
       /* Glass login panel on the navy canvas */
       .login-panel {
         background: linear-gradient(165deg, rgba(255, 255, 255, 0.97), rgba(241, 246, 254, 0.93));
@@ -771,12 +768,8 @@
           0 8px 20px rgba(2, 6, 23, 0.45);
       }
       .login-label { color: #475569 !important; }
-      /* Focus rings: navy on white surfaces (black text), gold only on dim/black surfaces */
-      .login-panel .input:focus {
-        border-color: rgba(15, 31, 74, 0.45);
-        box-shadow: 0 0 0 3px rgba(15, 31, 74, 0.12);
-      }
-      #page-content .input:focus, [role="dialog"] .input:focus {
+      /* Gold focus rings & primary buttons */
+      .input:focus {
         border-color: rgba(252, 209, 22, 0.65);
         box-shadow: 0 0 0 3px rgba(252, 209, 22, 0.22), 0 0 18px -4px rgba(252, 209, 22, 0.35);
       }
@@ -811,9 +804,9 @@
         color: rgba(226, 232, 240, 0.5) !important;
       }
       .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); }
-      /* Count-up affordance: navy dotted underline on light cards */
+      /* Count-up affordance */
       .edu-countable { cursor: help; }
-      .edu-countable:hover { text-decoration: underline dotted rgba(15, 31, 74, 0.5); text-underline-offset: 4px; }
+      .edu-countable:hover { text-decoration: underline dotted rgba(252, 209, 22, 0.8); text-underline-offset: 4px; }
       @media (prefers-reduced-motion: reduce) {
         .aurora-orb { animation: none !important; }
         .hero-banner::after { animation: none !important; }
@@ -881,138 +874,12 @@
       #page-content .border-t, #page-content .border-b {
         border-color: rgba(255, 255, 255, 0.1) !important;
       }
-      /* Scrollable lists: subtle slate thumb on light, thin gold only on dark chrome */
+      /* Scrollable lists keep the thin gold thumb */
       #page-content .overflow-y-auto::-webkit-scrollbar-thumb,
       #page-content .overflow-auto::-webkit-scrollbar-thumb {
-        background: rgba(148, 163, 184, 0.45);
+        background: rgba(252, 209, 22, 0.35);
         border-radius: 9999px;
       }
-      /* ---- CONTRAST CONTRACT (CSS layer) ----
-         RULE 1: every white / light background or container uses BLACK text.
-         RULE 2: every dim / black background uses WHITE text.
-         RULE 3: gold (#fcd116 / gold-500) may appear ONLY on dim/black surfaces.
-         Surfaces are tagged by JS (enforceContrastContract) via data-surface. */
-      [data-surface="light"] { color: #000000 !important; }
-      [data-surface="light"] :where(h1,h2,h3,h4,h5,p,span,div,li,ul,ol,td,th,label,a,b,strong,em,i,u,small,code,pre,dt,dd,figcaption,summary,time,mark,abbr,cite,output,legend,caption,blockquote,article,section,header,footer,nav,aside,main,figure,dl,sub,sup,del,ins,kbd,samp,var,q,rp,rt,ruby,bdi,bdo,wbr,h6,menu,dir,hgroup,rb,rtc) {
-        color: #000000 !important;
-      }
-      [data-surface="light"] :is(input, textarea, select) { color: #000000 !important; }
-      [data-surface="light"] ::placeholder { color: #334155 !important; }
-      /* Semantic colors stay readable on white (gold is NOT allowed here). */
-      [data-surface="light"] .text-brand-500, [data-surface="light"] .text-brand-600,
-      [data-surface="light"] .text-brand-700, [data-surface="light"] .text-brand-800,
-      [data-surface="light"] .text-brand-900, [data-surface="light"] .text-brand-950 { color: #1447d1 !important; }
-      [data-surface="light"] .text-emerald-600, [data-surface="light"] .text-emerald-700,
-      [data-surface="light"] .text-green-600, [data-surface="light"] .text-green-700,
-      [data-surface="light"] .text-gh-green { color: #006b3f !important; }
-      [data-surface="light"] .text-rose-600, [data-surface="light"] .text-rose-700,
-      [data-surface="light"] .text-red-600, [data-surface="light"] .text-red-700,
-      [data-surface="light"] .text-gh-red { color: #b3121f !important; }
-      [data-surface="light"] .text-orange-600, [data-surface="light"] .text-orange-700 { color: #c2410c !important; }
-      /* Rule 3 — strip gold/amber/yellow ink from any light surface. */
-      [data-surface="light"] .text-gold-500, [data-surface="light"] .text-gold-600,
-      [data-surface="light"] .text-amber-500, [data-surface="light"] .text-amber-600,
-      [data-surface="light"] .text-amber-700, [data-surface="light"] .text-yellow-500,
-      [data-surface="light"] .text-yellow-600 { color: #000000 !important; }
-      /* Gradient "engraved" text never renders over a light surface. */
-      [data-surface="light"] .edu-gradient-text {
-        background: none !important;
-        -webkit-background-clip: border-box !important;
-        background-clip: border-box !important;
-        color: #000000 !important;
-        animation: none !important;
-      }
-      /* Dark / dim surfaces → white ink */
-      [data-surface="dark"] { color: #ffffff !important; }
-      [data-surface="dark"] :where(h1,h2,h3,h4,h5,p,span,div,li,ul,ol,td,th,label,a,b,strong,em,i,u,small,code,pre,dt,dd,figcaption,summary,time,mark,abbr,cite,output,legend,caption,blockquote,article,section,header,footer,nav,aside,main,figure,dl,sub,sup,del,ins,kbd,samp,var,q,rp,rt,ruby,bdi,bdo,wbr,h6,menu,dir,hgroup,rb,rtc) {
-        color: #ffffff !important;
-      }
-      [data-surface="dark"] :is(input, textarea, select) { color: #ffffff !important; }
-      [data-surface="dark"] ::placeholder { color: rgba(226, 232, 240, 0.6) !important; }
-      [data-surface="dark"] .text-slate-500, [data-surface="dark"] .text-slate-400,
-      [data-surface="dark"] .text-gray-500, [data-surface="dark"] .text-gray-400 { color: rgba(226, 232, 240, 0.78) !important; }
-      [data-surface="dark"] .btn-primary { color: #ffffff !important; }
-      /* Gold ink is legal ONLY here (dim/black surfaces). */
-      [data-surface="dark"] .text-gold-500, [data-surface="dark"] .text-gold-600,
-      [data-on-dark] .text-gold-500, [data-on-dark] .text-gold-600 { color: var(--edu-gold) !important; }
-      /* Explicit opt-out: hand-marked elements that sit on dark/black chrome
-         (hero panels, navy banners, glass dialogs) keep white ink + gold. */
-      [data-on-dark] { color: #ffffff !important; }
-      [data-on-dark] :where(h1,h2,h3,h4,h5,p,span,div,li,td,th,label,a,b,strong) { color: #ffffff !important; }
-      [data-on-dark] .text-gold-500, [data-on-dark] .text-gold-600 { color: var(--edu-gold) !important; }
-      #page-content .bg-white, #page-content section.bg-white, #page-content form.bg-white {
-        background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%) !important;
-        color: #000000 !important;
-        border-color: rgba(15, 31, 74, 0.12) !important;
-      }
-      #page-content .bg-white h1, #page-content .bg-white h2, #page-content .bg-white h3,
-      #page-content .bg-white h4, #page-content .bg-white p, #page-content .bg-white span,
-      #page-content .bg-white div, #page-content .bg-white td, #page-content .bg-white th,
-      #page-content .bg-white li, #page-content .bg-white label, #page-content .bg-white button,
-      #page-content .bg-white a:not(.btn-primary):not(.text-brand-700) { color: #000000; }
-      #page-content .bg-white .text-slate-500, #page-content .bg-white .text-slate-400 { color: #334155 !important; }
-      #page-content .bg-white .text-gold-500, #page-content .bg-white [class*="gold"] { color: #000000 !important; }
-      #page-content table thead th, #page-content table thead td {
-        color: #1e293b !important;
-        border-bottom: 1px solid rgba(15, 31, 74, 0.2);
-      }
-      #page-content table { color: #000000; }
-      #page-content table tbody tr:hover td { background: rgba(15, 31, 74, 0.04); }
-      #page-content table tbody tr { border-color: rgba(15, 31, 74, 0.08) !important; }
-      #page-content .border-t, #page-content .border-b, #page-content .divide-dark > * + *,
-      #page-content .dark-hairline { border-color: rgba(15, 31, 74, 0.1) !important; }
-      /* Inputs & selects: white fields, black text */
-      #page-content .input, #page-content select.input, #page-content textarea.input {
-        background: #ffffff;
-        border-color: rgba(15, 31, 74, 0.18);
-        color: #000000;
-        box-shadow: inset 0 1px 2px rgba(15, 31, 74, 0.06);
-      }
-      #page-content .input::placeholder { color: #475569; }
-      #page-content .input option { color: #000000; background: #fff; }
-      #page-content .input[readonly], #page-content .input:disabled {
-        background: #f1f5f9;
-        color: #334155;
-      }
-      /* Ghost buttons: white surface → black text */
-      #page-content .btn-ghost-dark {
-        background: #ffffff !important;
-        border-color: rgba(15, 31, 74, 0.18) !important;
-        color: #000000 !important;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 4px 10px -6px rgba(15, 31, 74, 0.25);
-      }
-      #page-content .btn-ghost-dark:hover {
-        background: #f6f8fd !important;
-        border-color: rgba(15, 31, 74, 0.35) !important;
-        color: #000000 !important;
-      }
-      #page-content .hover-row-dark:hover { background: rgba(15, 31, 74, 0.05) !important; }
-      /* Embossed insets ride the navy canvas → white ink, gold hairline allowed */
-      #page-content .embossed-inset { color: #f1f5f9 !important; }
-      #page-content .embossed-inset .ink-body { color: rgba(226, 232, 240, 0.85) !important; }
-      /* Dialogs stay dark glass → white ink; gold accents are legal there */
-      [role="dialog"] .bg-white, section.bg-white[role="dialog"], form.bg-white[role="dialog"] {
-        background: transparent !important;
-        color: #f1f5f9 !important;
-      }
-      /* Status chips: light tinted backgrounds must carry BLACK text (Rule 1).
-         Solid dark/navy chips keep white ink — declared earlier so they win. */
-      #page-content .badge[class*="bg-"], [role="dialog"] .badge[class*="bg-"] { color: #000000 !important; }
-      #page-content .badge.bg-emerald-100, #page-content .badge.bg-emerald-50 { background: #e7f8ef !important; color: #000000 !important; }
-      #page-content .badge.bg-amber-100, #page-content .badge.bg-amber-50 { background: #fdf3d7 !important; color: #000000 !important; }
-      #page-content .badge.bg-orange-100 { background: #fdeadd !important; color: #000000 !important; }
-      #page-content .badge.bg-rose-100, #page-content .badge.bg-red-100 { background: #fce8ea !important; color: #000000 !important; }
-      #page-content .badge.bg-slate-100, #page-content .badge.bg-slate-200 { background: #eef2f7 !important; color: #000000 !important; }
-      #page-content .badge.bg-brand-100 { background: #e3eeff !important; color: #000000 !important; }
-      #page-content .badge.bg-gh-green\/15 { background: rgba(0, 107, 63, 0.14) !important; color: #000000 !important; }
-      [role="dialog"] .badge.bg-emerald-100, [role="dialog"] .badge.bg-amber-100,
-      [role="dialog"] .badge.bg-orange-100, [role="dialog"] .badge.bg-rose-100,
-      [role="dialog"] .badge.bg-slate-100, [role="dialog"] .badge.bg-slate-200,
-      [role="dialog"] .badge.bg-brand-100, [role="dialog"] .badge.bg-gh-green\/15 {
-        color: #000000 !important;
-      }
-      .btn-primary:not(.badge), .bg-brand-700, .bg-brand-800, .bg-brand-900, .bg-brand-950,
-      .bg-slate-700, .bg-slate-800, .bg-slate-900, .bg-black, .bg-gh-green.text-white { color: #ffffff !important; }
       /* Modals & dropdown panels get frosted relief */
       .dialog-glass {
         background: linear-gradient(165deg, rgba(13, 22, 48, 0.97), rgba(8, 14, 34, 0.96)) !important;
@@ -1073,10 +940,9 @@
         color: #f8fafc;
         text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 10px 30px rgba(2,6,23,0.5);
       }
-      /* Stat numbers keep high-contrast black ink on white/glass cards.
-         Gold hairline only appears on hover (light glint over dark shadow). */
+      /* Stat numbers get the gold treatment like the concept's highlights */
       .stat-card [data-count], .stat-card .text-2xl, .stat-card .text-3xl {
-        color: #000000;
+        color: #0f1f4a;
       }
       .stat-card::after {
         content: "";
@@ -1139,41 +1005,24 @@
         border-radius: 0.9rem;
       }
       #page-content .embossed-inset .ink-body { color: rgba(226, 232, 240, 0.75) !important; }
-      /* Dark ink utilities apply ONLY inside dark glass dialogs & dimmed insets.
-         White/light page surfaces keep black text (contrast contract). */
-      [role="dialog"] .text-slate-900, [role="dialog"] .text-slate-800, [role="dialog"] .text-slate-700 { color: #ffffff !important; }
-      [role="dialog"] .text-slate-600, [role="dialog"] .text-slate-500 { color: rgba(241, 245, 249, 0.85) !important; }
-      [role="dialog"] .text-slate-400 { color: rgba(226, 232, 240, 0.7) !important; }
-      #page-content .embossed-inset .text-slate-900, #page-content .embossed-inset .text-slate-800,
-      #page-content .embossed-inset .text-slate-700 { color: #ffffff !important; }
-      #page-content .embossed-inset .text-slate-600, #page-content .embossed-inset .text-slate-500,
-      #page-content .embossed-inset .text-slate-400 { color: rgba(226, 232, 240, 0.8) !important; }
-      /* Status badges keep their own tone chips — but always with black text */
+      /* Dark ink utilities that appear inside glass slabs & dialogs */
+      #page-content .text-slate-900, #page-content .text-slate-800, #page-content .text-slate-700,
+      [role="dialog"] .text-slate-900, [role="dialog"] .text-slate-800, [role="dialog"] .text-slate-700 { color: #f1f5f9 !important; }
+      #page-content .text-slate-600, #page-content .text-slate-500,
+      [role="dialog"] .text-slate-600, [role="dialog"] .text-slate-500 { color: rgba(203, 213, 225, 0.78) !important; }
+      #page-content .text-slate-400, [role="dialog"] .text-slate-400 { color: rgba(203, 213, 225, 0.55) !important; }
+      /* Status badges keep their own tone chips */
       #page-content .badge[class*="bg-slate"], [role="dialog"] .badge[class*="bg-slate"] {
-        background: #e2e8f0 !important;
-        color: #000000 !important;
-        border: 1px solid rgba(15, 31, 74, 0.15);
+        background: rgba(148, 163, 184, 0.2) !important;
+        color: rgba(226, 232, 240, 0.9) !important;
+        border: 1px solid rgba(255, 255, 255, 0.14);
       }
-      /* White/95 & slate-50 inside dialogs are LIGHT containers → BLACK ink
-         (contrast contract Rule 1). Only the dialog shell itself is dim. */
-      [role="dialog"] .bg-white\/95 {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-color: rgba(15, 31, 74, 0.14) !important;
-        color: #000000 !important;
-      }
-      #page-content .bg-white\/95 {
-        background: rgba(255, 255, 255, 0.95) !important;
-        color: #000000 !important;
-      }
-      #page-content .bg-slate-50:not(.embossed-inset),
-      [role="dialog"] .bg-slate-50:not(.embossed-inset) {
-        background: #f8fafc !important;
-        color: #000000 !important;
-      }
-      [role="dialog"] .bg-gray-50, [role="dialog"] .bg-slate-100,
-      #page-content .bg-gray-50, #page-content .bg-slate-100 {
-        background: #f6f8fb !important;
-        color: #000000 !important;
+      /* Light surfaces anywhere become frosted glass panels */
+      #page-content .bg-white\/95, #page-content .bg-slate-50:not(.embossed-inset),
+      [role="dialog"] .bg-white\/95, [role="dialog"] .bg-slate-50:not(.embossed-inset) {
+        background: linear-gradient(165deg, rgba(13, 22, 48, 0.92), rgba(8, 14, 34, 0.9)) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #e2e8f0;
       }
       /* Dropdown / popover panels (search results, profile menu, notifications) */
       #page-content .absolute.z-40.bg-white,
@@ -1189,30 +1038,30 @@
         -webkit-backdrop-filter: blur(20px) saturate(1.3);
         backdrop-filter: blur(20px) saturate(1.3);
       }
-      /* Dialog interiors: labels, inputs, lists ride the dark glass → white ink */
-      [role="dialog"] label { color: #ffffff; }
+      /* Dialog interiors: labels, inputs, lists ride the glass */
+      [role="dialog"] label { color: #f1f5f9; }
       [role="dialog"] .input, [role="dialog"] select.input, [role="dialog"] textarea.input {
-        background: rgba(255, 255, 255, 0.94);
-        border-color: rgba(15, 31, 74, 0.25);
-        color: #000000;
-        box-shadow: inset 0 1px 2px rgba(2, 6, 23, 0.18);
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.16);
+        color: #f1f5f9;
+        box-shadow: inset 0 1px 2px rgba(2, 6, 23, 0.4);
       }
-      [role="dialog"] .input::placeholder { color: #475569; }
-      [role="dialog"] .input option { color: #000000; background: #fff; }
-      [role="dialog"] table { color: #000000; }
-      [role="dialog"] table thead th { color: #1e293b !important; border-bottom: 1px solid rgba(15, 31, 74, 0.25); }
+      [role="dialog"] .input::placeholder { color: rgba(203, 213, 225, 0.45); }
+      [role="dialog"] .input option { color: #0f172a; background: #fff; }
+      [role="dialog"] table { color: rgba(226, 232, 240, 0.85); }
+      [role="dialog"] table thead th { color: rgba(203, 213, 225, 0.75) !important; border-bottom: 1px solid rgba(252, 209, 22, 0.28); }
       [role="dialog"] .border-t, [role="dialog"] .border-b, [role="dialog"] .divide-slate-100 > * + * {
         border-color: rgba(255, 255, 255, 0.1) !important;
       }
       [role="dialog"] button.border-slate-200, [role="dialog"] a.border-slate-200 {
-        background: rgba(255, 255, 255, 0.94);
-        border-color: rgba(15, 31, 74, 0.25) !important;
-        color: #000000;
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.16) !important;
+        color: #e2e8f0;
       }
       [role="dialog"] button.border-slate-200:hover, [role="dialog"] a.border-slate-200:hover {
-        background: #ffffff;
-        border-color: rgba(15, 31, 74, 0.45) !important;
-        color: #000000;
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(252, 209, 22, 0.5) !important;
+        color: #fff;
       }
       /* Entrance animations for dynamically mounted chrome */
       @keyframes dialogRise {
@@ -1258,61 +1107,6 @@
           -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
         }
         #page-content .glass-card::before { display: none !important; }
-      }
-
-      /* =========================================================
-         CONTRAST CONTRACT — FINAL OVERRIDE LAYER (last in <style>)
-         Declared last so it wins the cascade at equal specificity.
-         • White / light container  → BLACK text, never gold.
-         • Dim / black container    → WHITE text; gold allowed here only.
-         Enforced dynamically by enforceContrastContract() via
-         data-surface="light|dark" and hand-marked [data-on-dark].
-      ========================================================= */
-      /* 1) Any element sitting on a dim/black surface gets white ink. */
-      :is([role="dialog"], .embossed-inset, .hero-banner, [data-on-dark],
-          .glass-rail, .glass-bar, .footer-glass,
-          .bg-brand-950, .bg-brand-900, .bg-brand-800, .bg-brand-700,
-          .bg-slate-800, .bg-slate-900, .bg-black) :where(
-          h1,h2,h3,h4,h5,h6,p,span,div,li,td,th,label,a,b,strong,em,i,u,small,cite,code,summary,dt,dd) {
-        color: #ffffff !important;
-      }
-      /* ...but elements that re-introduce their own WHITE background flip back to black ink. */
-      :is([role="dialog"], .hero-banner, .glass-rail, .glass-bar, .footer-glass,
-          .bg-brand-950, .bg-brand-900, .bg-slate-900)
-        :where(.bg-white, .bg-white\/95, .bg-slate-50, .bg-slate-100, .bg-gray-50, .bg-gray-100,
-               .bg-emerald-50, .bg-emerald-100, .bg-amber-50, .bg-amber-100, .bg-orange-100,
-               .bg-rose-50, .bg-rose-100, .bg-red-100, .bg-brand-100, .bg-green-100, .bg-teal-100,
-               .bg-sky-100, .bg-indigo-100, .bg-yellow-100) :where(
-          h1,h2,h3,h4,h5,h6,p,span,div,li,td,th,label,a,b,strong,em,i,u,small,cite,summary) {
-        color: #000000 !important;
-      }
-      /* Light page containers (white cards, forms, tables) → black ink. */
-      #page-content :is(.bg-white, section.bg-white, form.bg-white, .page-card, .stat-card, table) :where(
-        h1,h2,h3,h4,h5,h6,p,span,div,li,td,th,label,a,b,strong,em,i,u,small,button,cite,summary) {
-        color: #000000 !important;
-      }
-      /* Primary buttons are dark/navy surfaces → white ink. */
-      .btn-primary :where(span, div, svg, i, b, strong) { color: #ffffff !important; }
-      /* 2) Gold ink is permitted ONLY on dim/black surfaces. */
-      :where([data-surface="light"], #app .login-panel, #page-content .bg-white,
-             #page-content .page-card, #page-content .stat-card, #page-content table,
-             [role="dialog"] .bg-white\/95)[class*="text-gold"],
-      [data-surface="light"] :is(.text-gold-500,.text-gold-600,.text-amber-500,.text-amber-600,.text-amber-700,.text-yellow-500,.text-yellow-600),
-      #page-content .bg-white :is(.text-gold-500,.text-gold-600,.text-amber-500,.text-amber-600,.text-yellow-500,.text-yellow-600) {
-        color: #000000 !important;
-      }
-      /* 3) Icons inherit the ink of their container (classic monochrome icons). */
-      svg:not([data-keep-color]) { color: inherit; }
-      [data-surface="light"] svg { color: #000000; }
-      [role="dialog"] :where(.bg-white, .bg-white\/95, .bg-slate-50) svg { color: #000000; }
-      @media print {
-        /* Report cards print classic: black ink on white. */
-        .report-card, .report-card * { color: #0f172a !important; }
-        .report-card [style*="background:#0f1f4a"], .report-card [style*="color:#fcd116"] {
-          color: #0f172a !important;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
       }
     </style>
   </head>
@@ -1503,7 +1297,7 @@
           <div class="sb-divider border-t p-4 flex items-center gap-3">
             <div
               id="sb-avatar"
-              class="w-9 h-9 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-brand-500 to-brand-800 text-white ring-2 ring-white/40 flex items-center justify-center font-bold text-sm"
+              class="w-9 h-9 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-brand-500 to-brand-800 text-white ring-2 ring-gold-500/50 flex items-center justify-center font-bold text-sm"
             >
               DA
             </div>
@@ -1628,7 +1422,7 @@
             >
               <span
                 id="tb-avatar"
-                class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-brand-500 to-brand-800 text-sm font-bold text-white ring-2 ring-white/40"
+                class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-brand-500 to-brand-800 text-sm font-bold text-white ring-2 ring-gold-500/50"
               ></span>
               <span class="hidden min-w-0 text-left sm:block">
                 <span
@@ -1657,7 +1451,13 @@
           <footer
             class="footer-glass no-print border-t px-4 py-2 text-center text-[10px] lg:px-8"
           >
-ESBA - GH \u00b7 Standards-Based Assessment Utility
+            3D artwork:
+            <a
+              class="underline hover:text-brand-700"
+              href="https://github.com/microsoft/fluentui-emoji"
+              target="_blank"
+              rel="noreferrer"
+              >Microsoft Fluent Emoji (MIT)</a
             >
             · UI inspiration:
             <a
@@ -2884,6 +2684,29 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
       }
 
       // ---------- UI helpers ----------
+      const STAT_CARD_ART = {
+        "🏫": "School/school_3d.png",
+        "✅": "Check%20mark%20button/check_mark_button_3d.png",
+        "🧪": "Test%20tube/test_tube_3d.png",
+        "⏰": "Alarm%20clock/alarm_clock_3d.png",
+        "⛔": "Prohibited/prohibited_3d.png",
+        "🎁": "Wrapped%20gift/wrapped_gift_3d.png",
+        "🎓": "Graduation%20cap/graduation_cap_3d.png",
+        "👩‍🏫": "Graduation%20cap/graduation_cap_3d.png",
+        "💰": "Money%20bag/money_bag_3d.png",
+        "📈": "Chart%20increasing/chart_increasing_3d.png",
+        "⚠️": "Warning/warning_3d.png",
+        "📅": "Calendar/calendar_3d.png",
+        "⏳": "Hourglass%20not%20done/hourglass_not_done_3d.png",
+        "🏛️": "School/school_3d.png",
+        "📖": "Books/books_3d.png",
+        "✍️": "Pencil/pencil_3d.png",
+        "🧮": "Abacus/abacus_3d.png",
+        "🎯": "Bullseye/bullseye_3d.png",
+        "🏆": "Trophy/trophy_3d.png",
+      };
+      const fluentEmojiUrl = (asset) =>
+        `https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/${asset.split("/")[0]}/3D/${asset.split("/")[1]}`;
       function statCard({ label, value, delta, icon, tone = "brand" }) {
         const tones = {
           brand: "from-brand-600 to-brand-800",
@@ -2900,7 +2723,7 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
                 <div class="stat-value text-2xl sm:text-3xl font-black text-slate-800 mt-2 break-words" ${/^[\d,]+$/.test(String(value).replace(/,/g, "")) && /^\d/.test(String(value)) ? `data-count="${String(value).replace(/,/g, "")}" data-suffix=""` : ""}>${value}</div>
                 ${delta ? `<div class="text-xs mt-2 text-gh-green font-semibold">▲ ${delta}</div>` : ""}
               </div>
-              <div class="w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br ${tones[tone]} flex items-center justify-center text-2xl" aria-hidden="true">${classicIcon(icon)}</div>
+              <div class="w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br ${tones[tone]} flex items-center justify-center p-1.5"><img src="${fluentEmojiUrl(STAT_CARD_ART[icon] || "Books/books_3d.png")}" alt="" aria-hidden="true" width="36" height="36" loading="lazy" class="h-9 w-9 object-contain" onerror="this.hidden=true;this.nextElementSibling.classList.remove('hidden')" /><span class="hidden text-2xl" aria-hidden="true">${icon}</span></div>
             </div>
           </div>`;
       }
@@ -2924,30 +2747,51 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
       }
 
       // ---------- Role Nav Config ----------
-      // Classic icon set: simple, universally-recognized glyphs (no decorative SVGs)
       const NAV_ICONS = {
-        dashboard: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4CA}</span>',
-        schools: '<span class="text-lg leading-none" aria-hidden="true">\u{1F3EB}</span>',
-        subscriptions: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4B3}</span>',
-        plans: '<span class="text-lg leading-none" aria-hidden="true">\u2705</span>',
-        exceptions: '<span class="text-lg leading-none" aria-hidden="true">\u{1F6D1}</span>',
-        curriculum: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4DA}</span>',
-        assessment: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4DD}</span>',
-        grading: '<span class="text-lg leading-none" aria-hidden="true">\u{1F3AF}</span>',
-        audit: '<span class="text-lg leading-none" aria-hidden="true">\u{1F510}</span>',
-        settings: '<span class="text-lg leading-none" aria-hidden="true">\u2699\uFE0F</span>',
-        profile: '<span class="text-lg leading-none" aria-hidden="true">\u{1F464}</span>',
-        students: '<span class="text-lg leading-none" aria-hidden="true">\u{1F393}</span>',
-        teachers: '<span class="text-lg leading-none" aria-hidden="true">\u{1F9D1}\u200D\u{1F3EB}</span>',
-        classes: '<span class="text-lg leading-none" aria-hidden="true">\u{1F3DB}\uFE0F</span>',
-        subjects: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4D8}</span>',
-        academics: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4C5}</span>',
-        results: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4C8}</span>',
-        reports: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4D6}</span>',
-        imports: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4E5}</span>',
-        scores: '<span class="text-lg leading-none" aria-hidden="true">\u270F\uFE0F</span>',
-        submissions: '<span class="text-lg leading-none" aria-hidden="true">\u{1F4E4}</span>',
-        history: '<span class="text-lg leading-none" aria-hidden="true">\u{1F552}</span>',
+        dashboard:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
+        schools:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>',
+        subscriptions:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+        plans:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12l2 2 4-4"/></svg>',
+        exceptions:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>',
+        curriculum:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+        assessment:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="12" x2="8.01" y2="12"/><line x1="12" y1="12" x2="12.01" y2="12"/><line x1="16" y1="12" x2="16.01" y2="12"/><line x1="8" y1="17" x2="8.01" y2="17"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        grading:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+        audit:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+        settings:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+        profile:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+        students:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>',
+        teachers:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+        classes:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="21" x2="21" y2="21"/><path d="M5 21V9m6 12V9m8 12V9"/><path d="M12 3L2 9h20L12 3z"/></svg>',
+        subjects:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+        academics:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+        results:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+        reports:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+        imports:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+        scores:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+        submissions:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+        history:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>',
       };
       const NAV = {
         MAIN_ADMIN: [
@@ -3016,7 +2860,6 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
             history.replaceState({}, "", "#/login");
           }
           root.innerHTML = eduOrbs + $("#tpl-login").innerHTML;
-          enforceContrastContract(root);
           wireLogin();
           mountHero(root);
           return;
@@ -3041,8 +2884,6 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
         }
         root.innerHTML = eduOrbs + $("#tpl-shell").innerHTML;
         wireShell();
-        // Contrast contract on the static shell (sidebar, topbar, footer)
-        enforceContrastContract(root);
         const role = STATE.session.role;
         $("#sb-role-label").textContent = role.replace("_", " ");
         $("#sb-school").textContent = STATE.session.school || "Platform Admin";
@@ -3054,7 +2895,7 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
         $("#sidebar-nav").innerHTML = nav
           .map(
             (n) => `
-          <a href="#/${role}/${n.key}" data-route="${n.key}" data-on-dark class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm border-l-4 cursor-pointer ${route === n.key ? "active" : ""}">
+          <a href="#/${role}/${n.key}" data-route="${n.key}" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm border-l-4 cursor-pointer ${route === n.key ? "active" : ""}">
             <span class="shrink-0">${NAV_ICONS[n.iconKey] || NAV_ICONS.profile}</span>
             <span class="font-medium">${n.label}</span>
             ${route === n.key ? '<span class="ml-auto w-1.5 h-1.5 rounded-full bg-[#fcd116] shadow-[0_0_8px_rgba(252,209,22,0.9)]"></span>' : ""}
@@ -3062,7 +2903,6 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
         `,
           )
           .join("");
-        enforceContrastContract($("#sidebar-nav"));
         $$(".sidebar-link").forEach((a) =>
           a.addEventListener("click", (event) => {
             event.preventDefault();
@@ -3092,9 +2932,29 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
       // the "Educational App" dark-luxury design language.
       function applyDarkChrome(scope) {
         if (!scope) return;
-        enforceContrastContract(scope);
-        // Legacy class remapping kept for hover/hairline utilities.
-        // Contrast is now governed by data-surface tokens (see enforceContrastContract).
+        scope.querySelectorAll(".bg-white").forEach((el) => {
+          // Report cards stay light for print fidelity; every other surface
+          // rides the frosted navy glass of the Figma concept chrome.
+          if (el.classList.contains("report-card")) return;
+          if (el.closest(".report-card")) return;
+          el.classList.remove("bg-white");
+          el.classList.add(
+            el.matches('[role="dialog"], section, form') || el.closest('[role="dialog"]')
+              ? "dialog-glass"
+              : "glass-card",
+          );
+        });
+        scope.querySelectorAll(".bg-slate-50").forEach((el) => {
+          el.classList.remove("bg-slate-50");
+          el.classList.add("embossed-inset");
+        });
+        // Frosted dialog panels & sticky headers inside them
+        scope
+          .querySelectorAll('[role="dialog"].bg-white, .bg-white\\/95')
+          .forEach((el) => {
+            el.classList.remove("bg-white", "bg-white/95");
+            el.classList.add("dialog-glass");
+          });
         scope.querySelectorAll(".hover\\:bg-slate-100, .hover\\:bg-slate-50").forEach((el) => el.classList.add("hover-row-dark"));
         scope
           .querySelectorAll(
@@ -3102,126 +2962,17 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
           )
           .forEach((el) => el.classList.add("dark-hairline"));
         scope
+          .querySelectorAll(".text-slate-900, .text-brand-900")
+          .forEach((el) => el.classList.add("ink-title"));
+        scope
+          .querySelectorAll(".text-slate-700, .text-slate-600, .text-slate-800")
+          .forEach((el) => el.classList.add("ink-body"));
+        scope
+          .querySelectorAll(".text-slate-500, .text-slate-400")
+          .forEach((el) => el.classList.add("ink-muted"));
+        scope
           .querySelectorAll("button.border-slate-200, a.border-slate-200")
           .forEach((el) => el.classList.add("btn-ghost-dark"));
-      }
-
-      // ---------- Contrast contract (HTML/CSS/JS only) ----------
-      // RULE 1: every white / light background or container → BLACK text.
-      // RULE 2: every dim / black background → WHITE text.
-      // RULE 3: gold colours apply ONLY to dimmed / black backgrounds.
-      // The engine walks the DOM, classifies each element's *effective*
-      // surface (its own background, otherwise inherited from the nearest
-      // painted ancestor), tags it with data-surface and strips any illegal
-      // gold ink from light surfaces.
-      const CLS_LIGHT_BG = /(^|\s)bg-(?:white(?:\/(?:9[0-5]|100))?|slate-50|slate-100|gray-50|gray-100|grey-50|grey-100|zinc-50|stone-50|neutral-50|brand-50|brand-100|(?:emerald|amber|orange|rose|red|green|sky|blue|indigo|teal|cyan|lime|fuchsia|violet|purple|yellow)-(?:50|100))(\/\d{1,2})?(?=\s|$)/;
-      const CLS_DARK_BG  = /(^|\s)bg-(?:black|slate-(?:[6-9]00|950)|gray-(?:[6-9]00|900)|grey-(?:[6-9]00|900)|zinc-(?:[7-9]00)|neutral-(?:[7-9]00)|brand-(?:[6-9]00|950)|(?:emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|rose|red|orange|amber|green)-(?:[5-9]00|900)|gh-green|gh-red|gh-black)(?:\/\d{1,2})?(?=\s|$)/;
-      const GOLD_INK_RE  = /(?:^|\s)text-(?:gold|amber|yellow)-(?:[4-6]00|900)(?:\/\d{1,2})?(?=\s|$)|text-gh-gold/;
-      const DARK_TEXT_RE = /(?:^|\s)text-(?:slate|gray|grey|zinc|neutral|brand)-(?:[6-9]00|950)(?=\s|$)/;
-      const TRANSPARENT_RE = /^rgba?\((\s*0\s*,\s*0\s*,\s*0\s*,\s*0\s*\)|transparent)$/i;
-
-      function rgbStringToArr(rgb) {
-        const m = String(rgb).match(/[\d.]+/g);
-        if (!m) return null;
-        return m.map(Number);
-      }
-      // Relative luminance (WCAG) of a computed colour string.
-      function luminanceOf(rgb) {
-        const arr = rgbStringToArr(rgb);
-        if (!arr) return null;
-        const [r, g, b, a] = arr;
-        if (a === 0) return null; // transparent — no information
-        const lin = (c) => {
-          c /= 255;
-          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-        };
-        return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-      }
-      // Does this element paint its OWN background (via utility class)?
-      function ownBackgroundClass(el) {
-        const cls = typeof el.className === "string" ? el.className : "";
-        if (!cls) return null;
-        if (CLS_LIGHT_BG.test(cls)) return "light";
-        if (CLS_DARK_BG.test(cls)) return "dark";
-        if (/(^|\s)bg-gradient-to-/.test(cls)) {
-          // gradient chips are brand/navy unless they start from a light tone
-          return /from-(?:white|slate-(?:50|100|200)|gray-(?:50|100)|brand-(?:50|100|200))/.test(cls) ? "light" : "dark";
-        }
-        return null;
-      }
-      function ownBackgroundComputed(el) {
-        const cs = getComputedStyle(el);
-        const bg = cs.backgroundColor;
-        if (!bg || TRANSPARENT_RE.test(bg)) return null;
-        const lum = luminanceOf(bg);
-        if (lum == null) return null;
-        return lum >= 0.6 ? "light" : lum <= 0.25 ? "dark" : "mid";
-      }
-      // Hand-marked dark chrome containers (never derived from Tailwind classes).
-      function handMarkedDarkAncestor(el) {
-        return el.closest(
-          '[data-on-dark], .embossed-inset, .hero-banner, [role="dialog"], ' +
-          ".glass-rail, .glass-bar, .footer-glass, #search-results-panel, " +
-          "#profile-menu, #notifications-panel",
-        );
-      }
-      function classifyElement(el) {
-        return ownBackgroundClass(el) || ownBackgroundComputed(el) || null;
-      }
-      // Effective surface: nearest painted ancestor wins (closest first).
-      function resolveSurface(el) {
-        if (el.hasAttribute && el.hasAttribute("data-on-dark")) return "dark";
-        let node = el;
-        while (node && node.nodeType === 1) {
-          const own = classifyElement(node);
-          if (own === "light") return "light";
-          if (own === "dark") return "dark";
-          if (own === "mid") return "light"; // mid tones keep black ink (safe default)
-          if (node.getAttribute) {
-            const tok = node.getAttribute("data-surface");
-            if (tok === "light" || tok === "dark") return tok;
-          }
-          if (node.matches) {
-            if (node.matches("[data-on-dark], .embossed-inset, .hero-banner")) return "dark";
-            if (node.matches('section.bg-white, form.bg-white, .login-panel')) return "light";
-          }
-          node = node.parentElement;
-        }
-        // Inside dialogs whose shell is dim navy glass but nothing painted yet.
-        if (handMarkedDarkAncestor(el)) return "dark";
-        return "light";
-      }
-      function enforceContrastContract(scope) {
-        if (!scope || !scope.querySelectorAll) return;
-        const nodes = [scope, ...scope.querySelectorAll("*")];
-        for (const el of nodes) {
-          if (!(el instanceof HTMLElement)) continue;
-          if (el.closest(".report-card")) continue; // print fidelity stays classic
-          const surface = resolveSurface(el);
-          // 1) Tag the surface so the CSS contract applies the right ink.
-          el.setAttribute("data-surface", surface);
-          // 2) RULE 3 — gold ink is illegal on white/light containers.
-          if (surface === "light" && GOLD_INK_RE.test(typeof el.className === "string" ? el.className : "")) {
-            el.classList.remove(
-              "text-gold-500", "text-gold-600",
-              "text-amber-500", "text-amber-600", "text-amber-700",
-              "text-yellow-500", "text-yellow-600", "text-gh-gold",
-            );
-            el.classList.add("text-black");
-          }
-          // 3) White ink on dim/black containers even if authored as dark text.
-          if (surface === "dark") {
-            const cls = typeof el.className === "string" ? el.className : "";
-            if (DARK_TEXT_RE.test(cls) && !el.matches("input, textarea, select")) {
-              el.classList.remove(
-                "text-slate-900", "text-slate-800", "text-slate-700", "text-slate-600",
-                "text-gray-900", "text-gray-800", "text-gray-700", "text-gray-600",
-                "text-brand-900", "text-brand-950",
-              );
-              el.classList.add("text-white");
-            }
-          }
-        }
       }
 
       function runCountUps(scope) {
@@ -3532,7 +3283,6 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
           <p class="mt-5 text-center text-sm text-slate-600">Already registered? <a href="#/login" data-go-login class="font-semibold text-brand-700 hover:underline">Sign in</a></p><p class="mt-3 text-center text-xs text-slate-500">By creating an account you agree to the <a href="#/terms" class="underline">Terms of Service</a> and <a href="#/privacy" class="underline">Privacy Policy</a>.</p></div></div></div>`;
         const form = $("[data-signup-form]", root);
         mountHero(root);
-        enforceContrastContract(root);
         const setRole = (next) => {
           role = next;
           $$("[data-signup-role]", root).forEach((b) => {
@@ -3761,9 +3511,9 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
             <div class="mt-6 flex gap-2" role="tablist" aria-label="Choose a highlight">${HERO_SLIDES.map((s, i) => `<button type="button" role="tab" class="hero-dot h-1.5 flex-1 overflow-hidden rounded-full bg-white/25" data-hero-dot="${i}" aria-label="Show highlight ${i + 1}"><i></i></button>`).join("")}</div>
           </div>
           <div class="relative hidden grid-cols-3 gap-3 text-sm [@media(min-height:820px)]:grid">
-            <div class="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div class="text-xl font-bold text-gold-500">9</div><div class="text-xs text-white/80">Levels covered</div></div>
-            <div class="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div class="text-xl font-bold text-gold-500">4</div><div class="text-xs text-white/80">User roles</div></div>
-            <div class="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div class="text-xl font-bold text-gold-500">30/70</div><div class="text-xs text-white/80">Configurable SBA</div></div>
+            <div class="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div class="text-xl font-bold text-gold-500">9</div><div class="text-xs text-brand-200">Levels covered</div></div>
+            <div class="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div class="text-xl font-bold text-gold-500">4</div><div class="text-xs text-brand-200">User roles</div></div>
+            <div class="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div class="text-xl font-bold text-gold-500">30/70</div><div class="text-xs text-brand-200">Configurable SBA</div></div>
           </div>
           <a class="absolute right-3 top-3 rounded bg-brand-950/60 px-2 py-1 text-[10px] text-white/80 hover:text-white" href="https://luminosfund.org" target="_blank" rel="noreferrer">Photo: Luminos Fund</a>
         </div>`;
@@ -4004,7 +3754,6 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
           "afterbegin",
           '<div class="aurora-orb orb-blue"></div><div class="aurora-orb orb-gold"></div>',
         );
-        enforceContrastContract($("#app"));
         document.title = `${page.title} — ESBA - GH`;
         legalShown = true;
         window.scrollTo(0, 0);
@@ -5264,7 +5013,9 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
                 return `<article class="rounded-lg border border-slate-200 bg-white p-4"><div class="flex items-center justify-between gap-2"><span class="badge bg-brand-50 text-brand-700">${escapeHtml(level?.label || "Level unavailable")}</span><span class="text-xs text-slate-500">${escapeHtml(subject?.name || "Subject unavailable")}</span></div><h3 class="mt-3 font-bold">${escapeHtml(record.strand)}</h3>${record.subStrand ? `<p class="mt-1 text-xs text-slate-500">Sub-strand: ${escapeHtml(record.subStrand)}</p>` : ""}<div class="mt-3 border-t border-slate-100 pt-3"><p class="text-[10px] font-bold uppercase tracking-wider text-brand-700">Content standard</p><p class="mt-1 text-sm">${escapeHtml(record.standard)}</p><p class="mt-3 text-[10px] font-bold uppercase tracking-wider text-brand-700">Indicator</p><p class="mt-1 text-sm">${escapeHtml(record.indicator)}</p></div>${record.competencies ? `<p class="mt-3 text-xs text-slate-500">Core competency: ${escapeHtml(record.competencies)}</p>` : ""}</article>`;
               })
               .join("") ||
-            '<div class="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center sm:col-span-2 xl:col-span-3"><div class="text-5xl" aria-hidden="true">\U0001F4DA</div><h3 class="mt-3 font-semibold">No curriculum records found</h3><p class="mt-1 text-sm text-slate-500">Add a strand, content standard and indicator to start building the catalog.</p></div>';
+            '<div class="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center sm:col-span-2 xl:col-span-3"><img src="' +
+              fluentEmojiUrl("Books/books_3d.png") +
+              '" width="72" height="72" alt="" aria-hidden="true" class="mx-auto h-16 w-16 object-contain" /><h3 class="mt-3 font-semibold">No curriculum records found</h3><p class="mt-1 text-sm text-slate-500">Add a strand, content standard and indicator to start building the catalog.</p></div>';
         };
         const openDialog = () => {
           const dialog = document.createElement("div");
@@ -6578,7 +6329,7 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
           $("[data-subject-grid]", el).innerHTML = STATE.subjects
             .map(
               (subject) =>
-                `<article class="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-4"><span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-xl" aria-hidden="true">\U0001F4D8</span><div class="min-w-0 flex-1"><h3 class="font-semibold">${escapeHtml(subject.name)}</h3><p class="mt-1 text-xs text-slate-500">Subject code: ${escapeHtml(subject.id)}</p></div><button type="button" data-edit-subject="${escapeHtml(subject.id)}" class="edu-action rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50">Edit</button></article>`,
+                `<article class="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-4"><img src="${fluentEmojiUrl("Books/books_3d.png")}" alt="" aria-hidden="true" width="40" height="40" class="h-10 w-10 object-contain" loading="lazy" onerror="this.hidden=true" /><div class="min-w-0 flex-1"><h3 class="font-semibold">${escapeHtml(subject.name)}</h3><p class="mt-1 text-xs text-slate-500">Subject code: ${escapeHtml(subject.id)}</p></div><button type="button" data-edit-subject="${escapeHtml(subject.id)}" class="edu-action rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50">Edit</button></article>`,
             )
             .join("");
         };
@@ -6790,7 +6541,9 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
                 return `<article class="rounded-lg border border-slate-200 bg-white p-4"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><h3 class="font-semibold">${escapeHtml(period.name)}</h3><p class="mt-1 text-xs text-slate-500">${escapeHtml(period.yearLabel)} · ${escapeHtml(STATE.terms.find((term) => term.id === period.termId)?.label || "Term unavailable")}</p></div><span class="badge ${status === "OPEN" ? "bg-emerald-100 text-emerald-700" : status === "UPCOMING" ? "bg-brand-100 text-brand-700" : "bg-slate-100 text-slate-600"}">${status}</span></div><div class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3 text-xs"><div><span class="text-slate-500">Opens</span><div class="mt-1 font-semibold">${escapeHtml(period.opens)}</div></div><div><span class="text-slate-500">Closes</span><div class="mt-1 font-semibold">${escapeHtml(period.closes)}</div></div></div><button type="button" data-view-period="${escapeHtml(period.id)}" class="edu-action mt-4 w-full rounded-lg border border-slate-200 py-2 text-xs font-semibold hover:bg-slate-50">Review results</button></article>`;
               })
               .join("") ||
-            '<div class="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center sm:col-span-2 xl:col-span-3"><div class="text-5xl" aria-hidden="true">\u270F\uFE0F</div><h3 class="mt-3 font-semibold">No assessment periods</h3><p class="mt-1 text-sm text-slate-500">Create a period to organize score entry and moderation.</p></div>';
+            '<div class="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center sm:col-span-2 xl:col-span-3"><img src="' +
+              fluentEmojiUrl("Pencil/pencil_3d.png") +
+              '" width="72" height="72" alt="" aria-hidden="true" class="mx-auto h-16 w-16 object-contain" /><h3 class="mt-3 font-semibold">No assessment periods</h3><p class="mt-1 text-sm text-slate-500">Create a period to organize score entry and moderation.</p></div>';
         };
         const openPeriodDialog = () => {
           const dialog = document.createElement("div");
@@ -7052,7 +6805,7 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
       registerRoute("SCHOOL_ADMIN:reports", () => {
         const el = document.createElement("div");
         el.className = "fade-in space-y-5";
-        el.innerHTML = `<div><h2 class="text-xl font-bold">Report Cards</h2><p class="text-sm text-slate-500">Preview and print published learner reports.</p></div><section class="overflow-hidden rounded-xl border border-slate-200 bg-white"><div class="flex flex-wrap gap-3 border-b border-slate-100 p-4"><select data-report-class class="input min-w-0 flex-1 md:max-w-[220px]" aria-label="Filter report cards by class"><option value="">All classes</option>${STATE.classes.map((cls) => `<option value="${escapeHtml(cls.id)}">${escapeHtml(classLabel(cls))}</option>`).join("")}</select><select data-report-term class="input min-w-0 flex-1 md:max-w-[160px]" aria-label="Filter report cards by term">${STATE.terms.map((term) => `<option value="${escapeHtml(term.id)}">${escapeHtml(term.label)}</option>`).join("")}</select></div><div data-report-list class="grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-3"></div><div data-report-empty class="hidden p-10 text-center"><div class="text-5xl" aria-hidden="true">\U0001F4D6</div><p class="mt-3 font-semibold">No published reports yet</p><p class="mt-1 text-sm text-slate-500">Publish assessment results before previewing report cards.</p></div><div data-report-count class="border-t border-slate-100 px-4 py-3 text-xs text-slate-500" aria-live="polite"></div></section>`;
+        el.innerHTML = `<div><h2 class="text-xl font-bold">Report Cards</h2><p class="text-sm text-slate-500">Preview and print published learner reports.</p></div><section class="overflow-hidden rounded-xl border border-slate-200 bg-white"><div class="flex flex-wrap gap-3 border-b border-slate-100 p-4"><select data-report-class class="input min-w-0 flex-1 md:max-w-[220px]" aria-label="Filter report cards by class"><option value="">All classes</option>${STATE.classes.map((cls) => `<option value="${escapeHtml(cls.id)}">${escapeHtml(classLabel(cls))}</option>`).join("")}</select><select data-report-term class="input min-w-0 flex-1 md:max-w-[160px]" aria-label="Filter report cards by term">${STATE.terms.map((term) => `<option value="${escapeHtml(term.id)}">${escapeHtml(term.label)}</option>`).join("")}</select></div><div data-report-list class="grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-3"></div><div data-report-empty class="hidden p-10 text-center"><img src="${fluentEmojiUrl("Books/books_3d.png")}" width="72" height="72" alt="" aria-hidden="true" class="mx-auto h-16 w-16 object-contain" /><p class="mt-3 font-semibold">No published reports yet</p><p class="mt-1 text-sm text-slate-500">Publish assessment results before previewing report cards.</p></div><div data-report-count class="border-t border-slate-100 px-4 py-3 text-xs text-slate-500" aria-live="polite"></div></section>`;
         const renderReports = () => {
           const classId = $("[data-report-class]", el).value;
           const termId = $("[data-report-term]", el).value;
@@ -8175,7 +7928,9 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
               </div>
             </div>
           </div>`
-              : '<div class="rounded-xl border border-slate-200 bg-white p-8 text-center"><div class="text-5xl" aria-hidden="true">\U0001F4D6</div><h3 class="mt-3 font-semibold">No published report cards</h3><p class="mt-1 text-sm text-slate-500">Your school will make your report card available here after results are published.</p></div>'
+              : '<div class="rounded-xl border border-slate-200 bg-white p-8 text-center"><img src="' +
+                fluentEmojiUrl("Books/books_3d.png") +
+                '" width="72" height="72" alt="" aria-hidden="true" class="mx-auto h-16 w-16 object-contain" /><h3 class="mt-3 font-semibold">No published report cards</h3><p class="mt-1 text-sm text-slate-500">Your school will make your report card available here after results are published.</p></div>'
           }
         `;
         el.addEventListener("click", (event) => {
@@ -8703,7 +8458,6 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
               : node.querySelector(".modal-backdrop") || node;
             if (scope.classList.contains("report-card") || scope.closest(".report-card")) continue;
             if (scope.querySelector(".report-card")) continue; // report modal: keep print fidelity
-            // Frosted dialog chrome for late-mounted modals & popovers
             scope.querySelectorAll('[role="dialog"].bg-white').forEach((el) => {
               el.classList.remove("bg-white");
               el.classList.add("dialog-glass");
@@ -8717,6 +8471,21 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
               el.classList.remove("bg-white");
               el.classList.add("dialog-glass");
             });
+            // Ink & hairline remapping so late-mounted dialogs read on glass.
+            // Report-card subtrees stay light for print fidelity.
+            const inkTargets = scope.matches(".text-slate-900, .text-brand-900, .text-slate-700, .text-slate-600, .text-slate-800, .text-slate-500, .text-slate-400")
+              ? [scope] : [];
+            scope
+              .querySelectorAll(
+                ".text-slate-900, .text-brand-900, .text-slate-700, .text-slate-600, .text-slate-800, .text-slate-500, .text-slate-400",
+              )
+              .forEach((el) => inkTargets.push(el));
+            inkTargets.forEach((el) => {
+              if (el.closest(".report-card")) return;
+              if (el.matches(".text-slate-900, .text-brand-900")) el.classList.add("ink-title");
+              else if (el.matches(".text-slate-700, .text-slate-600, .text-slate-800")) el.classList.add("ink-body");
+              else el.classList.add("ink-muted");
+            });
             scope.querySelectorAll(".border-slate-100, .border-slate-200, .divide-slate-100").forEach((el) => {
               if (el.closest(".report-card")) return;
               el.classList.add("dark-hairline");
@@ -8724,6 +8493,17 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
             scope.querySelectorAll("button.border-slate-200, a.border-slate-200").forEach((el) => {
               if (el.closest(".report-card")) return;
               el.classList.add("btn-ghost-dark");
+            });
+            scope.querySelectorAll(".bg-white").forEach((el) => {
+              if (el.classList.contains("report-card") || el.closest(".report-card")) return;
+              if (el.querySelector(".report-card")) return;
+              el.classList.remove("bg-white");
+              el.classList.add(el.matches('[role="dialog"]') ? "dialog-glass" : "glass-card");
+            });
+            scope.querySelectorAll(".bg-slate-50").forEach((el) => {
+              if (el.closest(".report-card")) return;
+              el.classList.remove("bg-slate-50");
+              el.classList.add("embossed-inset");
             });
             // Dropdown panels, popovers and any remaining light slabs mount
             // directly on body — give them the frosted relief too.
@@ -8735,9 +8515,6 @@ ESBA - GH \u00b7 Standards-Based Assessment Utility
             scope
               .querySelectorAll(".hover\\:bg-slate-100, .hover\\:bg-slate-50")
               .forEach((el) => el.classList.add("hover-row-dark"));
-            // Contrast contract: white/light surfaces → black ink,
-            // dim/black surfaces → white ink, gold only on dim/black.
-            enforceContrastContract(scope);
           }
         }
       });
