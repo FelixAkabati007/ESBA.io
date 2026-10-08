@@ -973,141 +973,118 @@
       }
 
       /* =========================================================
-         FULL-SCOPE GLASS CHROME — every surface (pages, dialogs,
-         dropdowns, toasts) is remapped in pure CSS onto the navy
-         aurora canvas with frosted glass + embossed relief.
+         TIER-1 CONTRAST CONTRACT (declarative, cascade-safe)
+         Rule 1 — white / light containers carry BLACK ink.
+         Rule 2 — dim / black / frosted-dark containers carry WHITE ink.
+         Rule 3 — GOLD is reserved exclusively for dim/black surfaces.
+         Implemented as a token layer so it can never drift again.
       ========================================================= */
-      #page-content .glass-card,
-      [role="dialog"].dialog-glass,
-      section.dialog-glass,
-      form.dialog-glass,
-      div.dialog-glass { color: rgba(226, 232, 240, 0.85); }
-      /* Glass slabs get a gold hairline crown on hover */
-      #page-content .glass-card { position: relative; }
-      #page-content .glass-card::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 12%; right: 12%;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(252,209,22,0.55), transparent);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
+      :root {
+        --ink-on-light: #0b1220;          /* near-black text on white   */
+        --ink-on-dark: #f8fafc;           /* near-white text on dim     */
+        --gold-on-dark: var(--edu-gold);  /* gold ONLY on dim surfaces  */
       }
-      #page-content .glass-card:hover::before { opacity: 1; }
-      /* Embossed insets carved into the dark canvas */
-      #page-content .embossed-inset {
-        background: linear-gradient(180deg, rgba(2, 6, 23, 0.45), rgba(10, 18, 44, 0.3)) !important;
-        box-shadow:
-          inset 2px 2px 6px rgba(0, 0, 0, 0.5),
-          inset -1px -1px 4px rgba(255, 255, 255, 0.05),
-          0 1px 0 rgba(255, 255, 255, 0.06) !important;
-        border-radius: 0.9rem;
+
+      /* ---- Light-surface tokens (black ink contract) ---- */
+      .surface-light {
+        color: var(--ink-on-light) !important;
       }
-      #page-content .embossed-inset .ink-body { color: rgba(226, 232, 240, 0.75) !important; }
-      /* Dark ink utilities that appear inside glass slabs & dialogs */
-      #page-content .text-slate-900, #page-content .text-slate-800, #page-content .text-slate-700,
-      [role="dialog"] .text-slate-900, [role="dialog"] .text-slate-800, [role="dialog"] .text-slate-700 { color: #f1f5f9 !important; }
-      #page-content .text-slate-600, #page-content .text-slate-500,
-      [role="dialog"] .text-slate-600, [role="dialog"] .text-slate-500 { color: rgba(203, 213, 225, 0.78) !important; }
-      #page-content .text-slate-400, [role="dialog"] .text-slate-400 { color: rgba(203, 213, 225, 0.55) !important; }
-      /* Status badges keep their own tone chips */
-      #page-content .badge[class*="bg-slate"], [role="dialog"] .badge[class*="bg-slate"] {
-        background: rgba(148, 163, 184, 0.2) !important;
-        color: rgba(226, 232, 240, 0.9) !important;
-        border: 1px solid rgba(255, 255, 255, 0.14);
+      .surface-light h1, .surface-light h2, .surface-light h3,
+      .surface-light h4, .surface-light p, .surface-light span,
+      .surface-light td, .surface-light th, .surface-light li,
+      .surface-light label, .surface-light dt, .surface-light dd,
+      .surface-light summary, .surface-light strong, .surface-light b {
+        color: var(--ink-on-light) !important;
       }
-      /* Light surfaces anywhere become frosted glass panels */
-      #page-content .bg-white\/95, #page-content .bg-slate-50:not(.embossed-inset),
-      [role="dialog"] .bg-white\/95, [role="dialog"] .bg-slate-50:not(.embossed-inset) {
-        background: linear-gradient(165deg, rgba(13, 22, 48, 0.92), rgba(8, 14, 34, 0.9)) !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
-        color: #e2e8f0;
+      .surface-light .text-slate-500, .surface-light .text-slate-600 {
+        color: #374151 !important;   /* AA ≥ 4.5:1 on white */
       }
-      /* Dropdown / popover panels (search results, profile menu, notifications) */
-      #page-content .absolute.z-40.bg-white,
-      #page-content .bg-white.shadow-xl,
-      body > .fixed .bg-white.shadow-xl {
-        background: linear-gradient(165deg, rgba(13, 22, 48, 0.98), rgba(8, 14, 34, 0.97)) !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        color: #e2e8f0 !important;
-        box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-          0 30px 60px -24px rgba(0, 0, 0, 0.8),
-          0 0 0 1px rgba(252, 209, 22, 0.1) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(1.3);
-        backdrop-filter: blur(20px) saturate(1.3);
+      .surface-light .text-slate-400 { color: #4b5563 !important; }
+      .surface-light .text-brand-200 { color: #1e40af !important; }
+      .surface-light .text-gold-500, .surface-light .text-gold-600,
+      .surface-light .text-amber-500 { color: #7a5c00 !important; } /* gold stripped */
+      .surface-light input, .surface-light select, .surface-light textarea {
+        color: var(--ink-on-light) !important;
       }
-      /* Dialog interiors: labels, inputs, lists ride the glass */
-      [role="dialog"] label { color: #f1f5f9; }
-      [role="dialog"] .input, [role="dialog"] select.input, [role="dialog"] textarea.input {
-        background: rgba(255, 255, 255, 0.07);
-        border-color: rgba(255, 255, 255, 0.16);
-        color: #f1f5f9;
-        box-shadow: inset 0 1px 2px rgba(2, 6, 23, 0.4);
+      .surface-light input::placeholder,
+      .surface-light textarea::placeholder { color: #4b5563 !important; }
+      .surface-light svg { color: inherit; }
+
+      /* ---- Dark-surface tokens (white ink + legal gold) ---- */
+      .surface-dark {
+        color: var(--ink-on-dark) !important;
       }
-      [role="dialog"] .input::placeholder { color: rgba(203, 213, 225, 0.45); }
-      [role="dialog"] .input option { color: #0f172a; background: #fff; }
-      [role="dialog"] table { color: rgba(226, 232, 240, 0.85); }
-      [role="dialog"] table thead th { color: rgba(203, 213, 225, 0.75) !important; border-bottom: 1px solid rgba(252, 209, 22, 0.28); }
-      [role="dialog"] .border-t, [role="dialog"] .border-b, [role="dialog"] .divide-slate-100 > * + * {
-        border-color: rgba(255, 255, 255, 0.1) !important;
+      .surface-dark h1, .surface-dark h2, .surface-dark h3,
+      .surface-dark h4, .surface-dark p, .surface-dark span,
+      .surface-dark td, .surface-dark th, .surface-dark li,
+      .surface-dark label, .surface-dark dt, .surface-dark dd,
+      .surface-dark summary, .surface-dark strong, .surface-dark b {
+        color: var(--ink-on-dark) !important;
       }
-      [role="dialog"] button.border-slate-200, [role="dialog"] a.border-slate-200 {
-        background: rgba(255, 255, 255, 0.07);
-        border-color: rgba(255, 255, 255, 0.16) !important;
-        color: #e2e8f0;
+      .surface-dark .text-slate-500, .surface-dark .text-slate-600,
+      .surface-dark .text-slate-400, .surface-dark .text-slate-700 {
+        color: rgba(226, 232, 240, 0.78) !important;
       }
-      [role="dialog"] button.border-slate-200:hover, [role="dialog"] a.border-slate-200:hover {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(252, 209, 22, 0.5) !important;
-        color: #fff;
+      .surface-dark .text-brand-200 { color: #bfdbfe !important; }
+      .surface-dark .text-gold-500, .surface-dark .text-gold-600,
+      .surface-dark .text-amber-500, .surface-dark .text-amber-600 {
+        color: var(--gold-on-dark) !important;
       }
-      /* Entrance animations for dynamically mounted chrome */
-      @keyframes dialogRise {
-        from { opacity: 0; transform: translateY(14px) scale(0.985); }
-        to   { opacity: 1; transform: none; }
+      .surface-dark input, .surface-dark select, .surface-dark textarea {
+        color: var(--ink-on-dark) !important;
       }
-      @keyframes fadeInBackdrop {
-        from { opacity: 0; }
-        to   { opacity: 1; }
+      .surface-dark input::placeholder,
+      .surface-dark textarea::placeholder { color: rgba(203, 213, 225, 0.55) !important; }
+      .surface-dark option { color: #0b1220; background: #fff; }
+      .surface-dark svg { color: inherit; }
+
+      /* Hero banners & glass chrome are dark surfaces by definition */
+      .hero-banner, .dialog-glass, [role="dialog"].bg-white,
+      div.absolute.z-40.bg-white, .shadow-xl.bg-white,
+      .glass-rail, .glass-bar, .footer-glass {
+        color: var(--ink-on-dark);
       }
-      .modal-backdrop { animation: fadeInBackdrop 0.22s ease both; }
-      [role="dialog"].dialog-glass, [role="dialog"].glass-card, [role="dialog"].login-panel {
-        animation: dialogRise 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+      /* Gold accents inside dark chrome stay gold (never force blanket ink —
+         nested light containers must keep their own black-ink contract) */
+      .hero-banner .text-gold-500, .dialog-glass .text-gold-500,
+      .glass-rail .text-gold-500 { color: var(--gold-on-dark) !important; }
+      /* Un-tagged text that inherits directly off dark chrome gets light ink */
+      .hero-banner > :not([data-contrast]),
+      .dialog-glass > :not([data-contrast]),
+      .glass-rail > :not([data-contrast]) { color: var(--ink-on-dark); }
+      /* Gold is a brand accent: never render it as raw gradient text on white */
+      .surface-light [class*="from-gold"], .surface-light [class*="to-gold"] {
+        background: none !important;
       }
-      #page-content > * { animation: fadeIn 0.4s ease both; }
-      @media (prefers-reduced-motion: reduce) {
-        .modal-backdrop, [role="dialog"].dialog-glass, #page-content > * { animation: none !important; }
+
+      /* Status chips: solid light backgrounds → guaranteed black ink */
+      .badge { font-weight: 700; letter-spacing: 0.02em; }
+      .badge.surface-light { color: #000 !important; }
+
+      /* Frosted-glass overlays (bg-white/xx) sit on dark chrome → white ink */
+      .surface-dark[class*="bg-white/"] { color: var(--ink-on-dark) !important; }
+
+      /* Hover states must never break the contract */
+      .surface-light.hover\\:bg-slate-50:hover,
+      .surface-light.hover\\:bg-slate-100:hover,
+      .surface-light [class*="hover:bg-slate"]:hover,
+      .surface-light [class*="hover:bg-brand-50"]:hover,
+      .surface-light [class*="hover:bg-rose-50"]:hover,
+      .surface-light [class*="hover:bg-emerald-50"]:hover,
+      .surface-light [class*="hover:bg-amber-50"]:hover {
+        color: var(--ink-on-light) !important;
       }
+      .surface-dark [class*="hover:bg-slate"]:hover,
+      .surface-dark .hover\\:bg-slate-50:hover,
+      .surface-dark .hover\\:bg-slate-100:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: var(--ink-on-dark) !important;
+      }
+
       @media print {
-        body { background: #fff !important; background-image: none !important; }
-        .aurora-orb { display: none !important; }
-        /* Report cards print on white with dark ink */
-        .report-card, [role="dialog"]:has(.report-card) {
-          background: #fff !important; color: #0f172a !important;
-          border-color: #e2e8f0 !important; box-shadow: none !important;
-          -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
-          animation: none !important;
-        }
-        .report-card .text-slate-900, .report-card .text-slate-800, .report-card .text-slate-700,
-        .report-card .text-slate-600, .report-card .text-slate-500, .report-card .text-slate-400 {
-          color: revert !important;
-        }
-        #page-content .ink-title, #page-content .ink-body, #page-content .ink-muted { color: inherit !important; }
-        #page-content .glass-card, #page-content .embossed-inset {
-          background: #fff !important; box-shadow: none !important; border-color: #e2e8f0 !important;
-        }
-        #page-content .text-slate-900, #page-content .text-slate-800, #page-content .text-slate-700,
-        #page-content .text-slate-600, #page-content .text-slate-500, #page-content .text-slate-400,
-        #page-content .text-gray-900 { color: revert !important; }
-        #page-content .bg-white\/95, #page-content .bg-slate-50 {
-          background: #fff !important; color: #0f172a !important;
-          border-color: #e2e8f0 !important; box-shadow: none !important;
-          -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
-        }
-        #page-content .glass-card::before { display: none !important; }
+        .surface-light, .surface-light * { color: #000 !important; }
       }
+
     </style>
   </head>
   <body class="text-slate-800">
@@ -2922,57 +2899,136 @@
         requestAnimationFrame(() => runCountUps($("#page-content")));
         $("#crumb-page").textContent =
           nav.find((n) => n.key === route)?.label || "Dashboard";
-        applyDarkChrome($("#page-content"));
+        applyContrastContract($("#page-content"));
         showForcePasswordChange();
       }
 
-      // ---------- Dark glass chrome alignment (Figma concept) ----------
-      // Route renderers emit light utility classes; inside the navy canvas
-      // we map them to frosted-glass equivalents so every screen matches
-      // the "Educational App" dark-luxury design language.
-      function applyDarkChrome(scope) {
+      // ---------- Tier-1 Contrast Contract ----------
+      // Design rule: every white/light container carries BLACK ink; every
+      // dim/black/frosted-dark container carries WHITE ink; gold accents are
+      // reserved exclusively for dim/black surfaces. Implemented as a
+      // deterministic token pass (surface-light / surface-dark classes) so
+      // the contract survives re-renders and dynamically mounted dialogs.
+      const CONTRAST_RULES = {
+        lightBg: [
+          "bg-white", "bg-slate-50", "bg-gray-50", "bg-slate-100", "bg-gray-100",
+          "bg-blue-50", "bg-emerald-50", "bg-emerald-100", "bg-amber-50",
+          "bg-amber-100", "bg-orange-100", "bg-rose-50", "bg-rose-100",
+          "bg-brand-50", "bg-brand-100", "bg-indigo-50", "bg-violet-50",
+          "bg-teal-50", "bg-cyan-50", "bg-green-50", "bg-lime-50",
+          "bg-yellow-50", "bg-yellow-100", "bg-fuchsia-50", "bg-pink-50",
+          "bg-red-50", "login-panel", "page-card", "stat-card", "embossed",
+        ],
+        darkBg: [
+          "bg-slate-600", "bg-slate-700", "bg-slate-800", "bg-slate-900",
+          "bg-slate-950", "bg-gray-700", "bg-gray-800", "bg-gray-900",
+          "bg-brand-600", "bg-brand-700", "bg-brand-800", "bg-brand-900",
+          "bg-brand-950", "bg-blue-600", "bg-blue-700", "bg-blue-800",
+          "bg-blue-900", "bg-indigo-600", "bg-indigo-700", "bg-navy-900",
+          "bg-black", "btn-primary", "dialog-glass", "hero-banner",
+          "glass-rail", "glass-bar", "footer-glass", "embossed-inset",
+          "bg-gh-green", "bg-gh-gold", "bg-gh-red", "bg-emerald-600",
+          "bg-emerald-700", "bg-rose-600", "bg-rose-700", "bg-amber-600",
+          "bg-amber-700", "bg-orange-600", "bg-red-600", "bg-red-700",
+        ],
+        lightInk: [
+          "text-black", "text-slate-900", "text-slate-800", "text-slate-700",
+          "text-gray-900", "text-gray-800", "text-brand-900", "text-brand-800",
+          "text-brand-700", "text-blue-900", "text-blue-800", "text-blue-700",
+          "text-emerald-800", "text-emerald-700", "text-emerald-600",
+          "text-rose-800", "text-rose-700", "text-rose-600", "text-amber-800",
+          "text-amber-700", "text-amber-600", "text-orange-700", "text-red-700",
+          "text-green-700", "text-teal-700", "text-indigo-700", "text-gh-green",
+        ],
+        darkInk: [
+          "text-white", "text-slate-50", "text-slate-100", "text-brand-200",
+          "text-brand-100", "text-blue-200", "text-emerald-200",
+          "text-emerald-100", "text-rose-200", "text-amber-200",
+          "text-amber-100", "text-orange-200", "text-green-200",
+        ],
+        goldInk: ["text-gold-500", "text-gold-600", "text-gold-400"],
+      };
+
+      function isLightSurface(el) {
+        return CONTRAST_RULES.lightBg.some((c) => el.classList.contains(c));
+      }
+      function isDarkSurface(el) {
+        const cls = el.classList;
+        if (CONTRAST_RULES.darkBg.some((c) => cls.contains(c))) return true;
+        if (el.matches('[role="dialog"].bg-white, div.absolute.z-40.bg-white, .shadow-xl.bg-white')) return true;
+        // Frosted translucent overlays (bg-white/10 … bg-white/25), dark
+        // tinted chips (bg-brand-950/60, bg-slate-950/40, bg-gh-green/15)
+        // and inline rgba() washes all sit on the navy canvas → dark ink.
+        for (const tok of el.classList) {
+          if (/^bg-white\/(?:5|10|15|20|25)$/.test(tok)) return true;
+          if (/^bg-(?:brand|slate|gray|navy)-(?:800|900|950)\/\d+$/.test(tok)) return true;
+          if (/^bg-gh-(?:green|red|gold)\/\d+$/.test(tok)) return true;
+        }
+        if (/rgba\(\s*(?:[0-9]|[01][0-9]?[0-9]?)\s*,\s*\d+\s*,\s*\d+/.test(el.getAttribute("style") || "")) {
+          const m = (el.getAttribute("style") || "").match(/rgba\((\d+),\s*(\d+),\s*(\d+)/);
+          if (m && Number(m[1]) + Number(m[2]) + Number(m[3]) < 300) return true;
+        }
+        return false;
+      }
+
+      /* Deterministic tree walk: parents are resolved before children, so a
+         container's effective painted surface decides the ink contract for
+         everything inside it. White/light → black ink; dim/black/frosted →
+         white ink; gold accents survive only on dim/black surfaces. */
+      function resolveSurface(el, inherited) {
+        if (isDarkSurface(el)) return "dark";
+        if (isLightSurface(el)) return "light";
+        if (inherited) return inherited;
+        if (el.closest('[role="dialog"], .modal-backdrop, .hero-banner, .glass-rail, .glass-bar, .footer-glass, .dialog-glass')) {
+          return "dark"; // frosted navy chrome
+        }
+        return null;
+      }
+
+      function applyContrastContract(scope) {
         if (!scope) return;
-        scope.querySelectorAll(".bg-white").forEach((el) => {
-          // Report cards stay light for print fidelity; every other surface
-          // rides the frosted navy glass of the Figma concept chrome.
-          if (el.classList.contains("report-card")) return;
-          if (el.closest(".report-card")) return;
-          el.classList.remove("bg-white");
-          el.classList.add(
-            el.matches('[role="dialog"], section, form') || el.closest('[role="dialog"]')
-              ? "dialog-glass"
-              : "glass-card",
-          );
-        });
-        scope.querySelectorAll(".bg-slate-50").forEach((el) => {
-          el.classList.remove("bg-slate-50");
-          el.classList.add("embossed-inset");
-        });
-        // Frosted dialog panels & sticky headers inside them
-        scope
-          .querySelectorAll('[role="dialog"].bg-white, .bg-white\\/95')
-          .forEach((el) => {
-            el.classList.remove("bg-white", "bg-white/95");
-            el.classList.add("dialog-glass");
-          });
-        scope.querySelectorAll(".hover\\:bg-slate-100, .hover\\:bg-slate-50").forEach((el) => el.classList.add("hover-row-dark"));
-        scope
-          .querySelectorAll(
-            ".border-slate-100, .border-slate-200, .divide-slate-100",
-          )
-          .forEach((el) => el.classList.add("dark-hairline"));
-        scope
-          .querySelectorAll(".text-slate-900, .text-brand-900")
-          .forEach((el) => el.classList.add("ink-title"));
-        scope
-          .querySelectorAll(".text-slate-700, .text-slate-600, .text-slate-800")
-          .forEach((el) => el.classList.add("ink-body"));
-        scope
-          .querySelectorAll(".text-slate-500, .text-slate-400")
-          .forEach((el) => el.classList.add("ink-muted"));
-        scope
-          .querySelectorAll("button.border-slate-200, a.border-slate-200")
-          .forEach((el) => el.classList.add("btn-ghost-dark"));
+        const rootEl = scope instanceof HTMLElement ? scope : null;
+        if (!rootEl) return;
+        const rootSurface =
+          rootEl.dataset.contrast ||
+          (isDarkSurface(rootEl) ? "dark"
+            : isLightSurface(rootEl) ? "light"
+            : rootEl.closest('[role="dialog"], .modal-backdrop, .hero-banner') ? "dark"
+            : null);
+        const walk = (node, inherited) => {
+          for (const child of node.children) {
+            if (!(child instanceof HTMLElement)) continue;
+            if (child.closest(".report-card")) continue; // print fidelity: black-on-white by design
+            const surface = resolveSurface(child, inherited);
+            if (surface) {
+              child.dataset.contrast = surface;
+              child.classList.toggle("surface-dark", surface === "dark");
+              child.classList.toggle("surface-light", surface === "light");
+              // Rule 3: gold only on dim/black — strip gold ink from light surfaces
+              if (surface === "light") {
+                for (const g of CONTRAST_RULES.goldInk) {
+                  if (child.classList.contains(g)) {
+                    child.classList.remove(g);
+                    child.classList.add("text-amber-800"); // accessible warm ink
+                  }
+                }
+              }
+            }
+            walk(child, surface || inherited);
+          }
+        };
+        if (rootSurface) {
+          rootEl.dataset.contrast = rootSurface;
+          rootEl.classList.toggle("surface-dark", rootSurface === "dark");
+          rootEl.classList.toggle("surface-light", rootSurface === "light");
+        }
+        walk(rootEl, rootSurface);
+      }
+
+      // Apply the contract to the whole document once, and re-run it after
+      // every route render / dialog mount via the MutationObserver below.
+      function enforceContrastEverywhere() {
+        applyContrastContract(document.body);
       }
 
       function runCountUps(scope) {
@@ -3484,7 +3540,7 @@
       ];
       let heroTimer = null;
       function heroPanelHtml() {
-        return `<div class="relative flex h-full flex-col justify-between overflow-hidden bg-brand-950 p-8 text-white xl:p-10">
+        return `<div class="hero-banner relative flex h-full flex-col justify-between overflow-hidden bg-brand-950 p-8 text-white xl:p-10">
           <img src="hero-classroom.jpg" alt="A Ghanaian pupil writing in her exercise book in class" class="hero-zoom absolute inset-0 h-full w-full object-cover" loading="eager" decoding="async" fetchpriority="high" width="933" height="1027" />
           <div class="absolute inset-0 bg-gradient-to-br from-brand-950/75 via-brand-900/35 to-transparent"></div>
           <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-brand-950/95 via-brand-950/60 to-transparent"></div>
@@ -3861,7 +3917,7 @@
         const dialog = document.createElement("div");
         dialog.className =
           "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
-        dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="cred-title" class="dialog-enter bg-white w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="p-5"><h2 id="cred-title" class="text-lg font-bold">${escapeHtml(title)}</h2><p class="mt-1 text-xs text-slate-500">Passwords are shown only now and cannot be recovered. Each person must change theirs the first time they sign in. Share these privately.</p>${items.length ? `<div class="mt-4 overflow-x-auto rounded-lg border border-slate-200"><table class="w-full text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500"><tr><th class="p-2 text-left">Name</th><th class="p-2 text-left">Username</th><th class="p-2 text-left">Temporary password</th></tr></thead><tbody class="divide-y divide-slate-100">${items.map((i) => `<tr><td class="p-2">${escapeHtml(i.name)}</td><td class="p-2 font-mono text-xs">${escapeHtml(i.username)}</td><td class="p-2 font-mono text-xs font-semibold">${escapeHtml(i.password)}</td></tr>`).join("")}</tbody></table></div>` : '<p class="mt-4 text-sm text-slate-600">No new logins were needed.</p>'}${skipped.length ? `<p class="mt-3 text-xs text-amber-700">Skipped: ${skipped.map(escapeHtml).join("; ")}</p>` : ""}<div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><button type="button" data-close class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Close</button>${items.length ? '<button type="button" data-download class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Download CSV</button>' : ""}</div></div></section>`;
+        dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="cred-title" class="dialog-enter dialog-glass w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="p-5"><h2 id="cred-title" class="text-lg font-bold">${escapeHtml(title)}</h2><p class="mt-1 text-xs text-slate-500">Passwords are shown only now and cannot be recovered. Each person must change theirs the first time they sign in. Share these privately.</p>${items.length ? `<div class="mt-4 overflow-x-auto rounded-lg border border-slate-200"><table class="w-full text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500"><tr><th class="p-2 text-left">Name</th><th class="p-2 text-left">Username</th><th class="p-2 text-left">Temporary password</th></tr></thead><tbody class="divide-y divide-slate-100">${items.map((i) => `<tr><td class="p-2">${escapeHtml(i.name)}</td><td class="p-2 font-mono text-xs">${escapeHtml(i.username)}</td><td class="p-2 font-mono text-xs font-semibold">${escapeHtml(i.password)}</td></tr>`).join("")}</tbody></table></div>` : '<p class="mt-4 text-sm text-slate-600">No new logins were needed.</p>'}${skipped.length ? `<p class="mt-3 text-xs text-amber-700">Skipped: ${skipped.map(escapeHtml).join("; ")}</p>` : ""}<div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><button type="button" data-close class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Close</button>${items.length ? '<button type="button" data-download class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Download CSV</button>' : ""}</div></div></section>`;
         const close = () => {
           dialog.remove();
           document.body.classList.remove("overflow-hidden");
@@ -3952,7 +4008,7 @@
         dialog.id = "force-pw";
         dialog.className =
           "fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4";
-        dialog.innerHTML = `<form role="dialog" aria-modal="true" aria-labelledby="fpw-title" class="dialog-enter w-full max-w-md space-y-3 rounded-xl bg-white p-5 shadow-2xl"><h2 id="fpw-title" class="text-lg font-bold">Set your own password</h2><p class="text-xs text-slate-500">Your School Admin gave you a temporary password. Choose a new one to continue.</p><label class="block text-xs font-semibold text-slate-600">New password<input name="password" type="password" autocomplete="new-password" required class="input mt-1" /></label><label class="block text-xs font-semibold text-slate-600">Confirm password<input name="confirm" type="password" autocomplete="new-password" required class="input mt-1" /></label><p data-error class="hidden text-sm text-gh-red" role="alert"></p><button type="submit" class="btn-primary w-full rounded-lg py-2.5 font-semibold">Save password</button></form>`;
+        dialog.innerHTML = `<form role="dialog" aria-modal="true" aria-labelledby="fpw-title" class="dialog-enter dialog-glass w-full max-w-md space-y-3 rounded-xl p-5 shadow-2xl"><h2 id="fpw-title" class="text-lg font-bold">Set your own password</h2><p class="text-xs text-slate-500">Your School Admin gave you a temporary password. Choose a new one to continue.</p><label class="block text-xs font-semibold text-slate-600">New password<input name="password" type="password" autocomplete="new-password" required class="input mt-1" /></label><label class="block text-xs font-semibold text-slate-600">Confirm password<input name="confirm" type="password" autocomplete="new-password" required class="input mt-1" /></label><p data-error class="hidden text-sm text-gh-red" role="alert"></p><button type="submit" class="btn-primary w-full rounded-lg py-2.5 font-semibold">Save password</button></form>`;
         $("form", dialog).addEventListener("submit", async (event) => {
           event.preventDefault();
           const v = Object.fromEntries(
@@ -4253,7 +4309,7 @@
             if (event.key === "Escape") finish();
           };
           const render = () => {
-            modal.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="notification-title" class="dialog-enter h-full w-full max-w-md overflow-y-auto bg-white shadow-2xl sm:h-auto sm:max-h-[90vh] sm:rounded-xl"><div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white p-4"><div><h2 id="notification-title" class="font-bold">Notifications</h2><p class="text-xs text-slate-500">${STATE.notifications.filter((item) => item.unread).length} unread</p></div><div class="flex items-center gap-2"><button type="button" data-mark-all class="text-xs font-semibold text-brand-700">Mark all read</button><button type="button" data-close-notifications aria-label="Close notifications" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div></div><div class="divide-y divide-slate-100">${STATE.notifications.map((item) => `<button type="button" data-notification-id="${escapeHtml(item.id)}" class="flex w-full gap-3 p-4 text-left hover:bg-slate-50"><span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${item.unread ? "bg-brand-600" : "bg-slate-200"}"></span><span class="min-w-0 flex-1"><span class="block text-sm font-semibold">${escapeHtml(item.title)}</span><span class="mt-1 block text-xs text-slate-500">${escapeHtml(item.body)}</span><span class="mt-2 block text-[10px] text-slate-400">${escapeHtml(item.at)}</span></span></button>`).join("") || '<p class="p-8 text-center text-sm text-slate-500">No notifications yet.</p>'}</div></section>`;
+            modal.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="notification-title" class="dialog-enter dialog-glass h-full w-full max-w-md overflow-y-auto shadow-2xl sm:h-auto sm:max-h-[90vh] sm:rounded-xl"><div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white p-4"><div><h2 id="notification-title" class="font-bold">Notifications</h2><p class="text-xs text-slate-500">${STATE.notifications.filter((item) => item.unread).length} unread</p></div><div class="flex items-center gap-2"><button type="button" data-mark-all class="text-xs font-semibold text-brand-700">Mark all read</button><button type="button" data-close-notifications aria-label="Close notifications" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div></div><div class="divide-y divide-slate-100">${STATE.notifications.map((item) => `<button type="button" data-notification-id="${escapeHtml(item.id)}" class="flex w-full gap-3 p-4 text-left hover:bg-slate-50"><span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${item.unread ? "bg-brand-600" : "bg-slate-200"}"></span><span class="min-w-0 flex-1"><span class="block text-sm font-semibold">${escapeHtml(item.title)}</span><span class="mt-1 block text-xs text-slate-500">${escapeHtml(item.body)}</span><span class="mt-2 block text-[10px] text-slate-400">${escapeHtml(item.at)}</span></span></button>`).join("") || '<p class="p-8 text-center text-sm text-slate-500">No notifications yet.</p>'}</div></section>`;
             modal
               .querySelector("[data-close-notifications]")
               .addEventListener("click", finish);
@@ -4537,7 +4593,7 @@
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
           dialog.setAttribute("role", "presentation");
           dialog.innerHTML = `
-                  <section role="dialog" aria-modal="true" aria-labelledby="school-dialog-title" class="dialog-enter bg-white w-full sm:max-w-xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto">
+                  <section role="dialog" aria-modal="true" aria-labelledby="school-dialog-title" class="dialog-enter dialog-glass w-full sm:max-w-xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto">
                     <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-4">
                       <div><h2 id="school-dialog-title" class="text-lg font-bold">${isEditing ? "Manage school" : "Register a school"}</h2><p class="mt-1 text-xs text-slate-500">School identity and subscription details</p></div>
                       <button type="button" data-close-dialog aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button>
@@ -4747,7 +4803,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="renew-title" class="dialog-enter bg-white w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="renew-title" class="text-lg font-bold">Extend subscription</h2><p class="mt-1 text-sm text-slate-500">${escapeHtml(school.name)} · ${escapeHtml(school.plan)} plan</p><form data-renew-form class="mt-4 space-y-4"><label class="block text-xs font-semibold text-slate-600">New expiry date<input name="expiry" type="date" required class="input mt-1" value="${escapeHtml(school.expiry)}" /></label><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-cancel-renew class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save renewal</button></div></form></div></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="renew-title" class="dialog-enter dialog-glass w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="renew-title" class="text-lg font-bold">Extend subscription</h2><p class="mt-1 text-sm text-slate-500">${escapeHtml(school.name)} · ${escapeHtml(school.plan)} plan</p><form data-renew-form class="mt-4 space-y-4"><label class="block text-xs font-semibold text-slate-600">New expiry date<input name="expiry" type="date" required class="input mt-1" value="${escapeHtml(school.expiry)}" /></label><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-cancel-renew class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save renewal</button></div></form></div></section>`;
           const finish = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -4818,7 +4874,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="plan-dialog-title" class="dialog-enter bg-white w-full sm:max-w-xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="plan-dialog-title" class="text-lg font-bold">${editing ? "Edit subscription plan" : "Create subscription plan"}</h2><p class="mt-1 text-xs text-slate-500">Set limits and included platform features.</p></div><button type="button" data-close-plan aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-plan-form class="p-5 space-y-4"><div class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Plan name<input name="name" required maxlength="40" class="input mt-1" value="${escapeHtml(plan?.name || "")}" /></label><label class="text-xs font-semibold text-slate-600">Monthly price (GH₵)<input name="price" type="number" min="0" step="1" required class="input mt-1" value="${escapeHtml(plan?.price ?? "0")}" /></label><label class="text-xs font-semibold text-slate-600">Billing cycle<select name="cycle" class="input mt-1"><option value="monthly">Monthly</option><option value="term">Per term</option><option value="annual">Annual</option></select></label><label class="text-xs font-semibold text-slate-600">Student limit<input name="maxStudents" type="number" min="1" step="1" required class="input mt-1" value="${escapeHtml(plan?.maxStudents ?? "200")}" /></label><label class="text-xs font-semibold text-slate-600">Teacher limit<input name="maxTeachers" type="number" min="1" step="1" required class="input mt-1" value="${escapeHtml(plan?.maxTeachers ?? "15")}" /></label><label class="text-xs font-semibold text-slate-600">Class limit<input name="maxClasses" type="number" min="1" step="1" required class="input mt-1" value="${escapeHtml(plan?.maxClasses ?? "8")}" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Features, comma separated<input name="features" class="input mt-1" value="${escapeHtml(plan?.features?.join(", ") || "student_portal, teacher_portal, assessment_entry")}" placeholder="student_portal, attendance" /></label></div><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-plan class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">${editing ? "Save plan" : "Create plan"}</button></div></form></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="plan-dialog-title" class="dialog-enter dialog-glass w-full sm:max-w-xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="plan-dialog-title" class="text-lg font-bold">${editing ? "Edit subscription plan" : "Create subscription plan"}</h2><p class="mt-1 text-xs text-slate-500">Set limits and included platform features.</p></div><button type="button" data-close-plan aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-plan-form class="p-5 space-y-4"><div class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Plan name<input name="name" required maxlength="40" class="input mt-1" value="${escapeHtml(plan?.name || "")}" /></label><label class="text-xs font-semibold text-slate-600">Monthly price (GH₵)<input name="price" type="number" min="0" step="1" required class="input mt-1" value="${escapeHtml(plan?.price ?? "0")}" /></label><label class="text-xs font-semibold text-slate-600">Billing cycle<select name="cycle" class="input mt-1"><option value="monthly">Monthly</option><option value="term">Per term</option><option value="annual">Annual</option></select></label><label class="text-xs font-semibold text-slate-600">Student limit<input name="maxStudents" type="number" min="1" step="1" required class="input mt-1" value="${escapeHtml(plan?.maxStudents ?? "200")}" /></label><label class="text-xs font-semibold text-slate-600">Teacher limit<input name="maxTeachers" type="number" min="1" step="1" required class="input mt-1" value="${escapeHtml(plan?.maxTeachers ?? "15")}" /></label><label class="text-xs font-semibold text-slate-600">Class limit<input name="maxClasses" type="number" min="1" step="1" required class="input mt-1" value="${escapeHtml(plan?.maxClasses ?? "8")}" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Features, comma separated<input name="features" class="input mt-1" value="${escapeHtml(plan?.features?.join(", ") || "student_portal, teacher_portal, assessment_entry")}" placeholder="student_portal, attendance" /></label></div><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-plan class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">${editing ? "Save plan" : "Create plan"}</button></div></form></section>`;
           const form = $("[data-plan-form]", dialog);
           $('[name="cycle"]', form).value = plan?.cycle || "monthly";
           const finish = () => {
@@ -4935,7 +4991,7 @@
           const modal = document.createElement("div");
           modal.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
-          modal.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="exception-title" class="dialog-enter bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="exception-title" class="text-lg font-bold">Grant free access</h2><p class="mt-1 text-xs text-slate-500">Record the school, exception type, reason and end date.</p></div><button type="button" data-close-exception aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-exception-form class="p-5 space-y-4"><label class="block text-xs font-semibold text-slate-600">School<select name="schoolId" required class="input mt-1"><option value="">Select a school</option>${STATE.schools.map((school) => `<option value="${escapeHtml(school.id)}">${escapeHtml(school.name)}</option>`).join("")}</select></label><div class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600">Exception type<select name="type" class="input mt-1"><option value="FULL_FREE_ACCESS">Full free access</option><option value="TEMPORARY_ACCESS">Temporary access</option><option value="FEATURE_ACCESS">Feature access</option></select></label><label class="text-xs font-semibold text-slate-600">Expiry date<input name="expiry" type="date" required class="input mt-1" value="2027-12-31" /></label></div><label class="block text-xs font-semibold text-slate-600">Reason<textarea name="reason" required maxlength="240" rows="3" class="input mt-1" placeholder="Reason for granting this exception"></textarea></label><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-exception class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Grant access</button></div></form></section>`;
+          modal.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="exception-title" class="dialog-enter dialog-glass w-full sm:max-w-lg sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="exception-title" class="text-lg font-bold">Grant free access</h2><p class="mt-1 text-xs text-slate-500">Record the school, exception type, reason and end date.</p></div><button type="button" data-close-exception aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-exception-form class="p-5 space-y-4"><label class="block text-xs font-semibold text-slate-600">School<select name="schoolId" required class="input mt-1"><option value="">Select a school</option>${STATE.schools.map((school) => `<option value="${escapeHtml(school.id)}">${escapeHtml(school.name)}</option>`).join("")}</select></label><div class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600">Exception type<select name="type" class="input mt-1"><option value="FULL_FREE_ACCESS">Full free access</option><option value="TEMPORARY_ACCESS">Temporary access</option><option value="FEATURE_ACCESS">Feature access</option></select></label><label class="text-xs font-semibold text-slate-600">Expiry date<input name="expiry" type="date" required class="input mt-1" value="2027-12-31" /></label></div><label class="block text-xs font-semibold text-slate-600">Reason<textarea name="reason" required maxlength="240" rows="3" class="input mt-1" placeholder="Reason for granting this exception"></textarea></label><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-exception class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Grant access</button></div></form></section>`;
           const finish = () => {
             modal.remove();
             document.body.classList.remove("overflow-hidden");
@@ -5021,7 +5077,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="curriculum-title" class="dialog-enter bg-white w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4"><h2 id="curriculum-title" class="text-lg font-bold">Add curriculum record</h2><p class="mt-1 text-xs text-slate-500">Connect the NaCCA learning hierarchy to a level and subject.</p></div><form data-curriculum-form class="grid gap-3 p-5 sm:grid-cols-2"><label class="text-xs font-semibold text-slate-600">Level<select name="levelId" required class="input mt-1">${STATE.levels.map((level) => `<option value="${escapeHtml(level.id)}">${escapeHtml(level.label)} · ${escapeHtml(level.phase)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600">Subject<select name="subjectId" required class="input mt-1">${STATE.subjects.map((subject) => `<option value="${escapeHtml(subject.id)}">${escapeHtml(subject.name)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Strand<input name="strand" required maxlength="120" class="input mt-1" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Sub-strand<input name="subStrand" maxlength="120" class="input mt-1" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Content standard<textarea name="standard" required maxlength="500" rows="2" class="input mt-1"></textarea></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Indicator<textarea name="indicator" required maxlength="500" rows="2" class="input mt-1"></textarea></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Core competency / value<input name="competencies" maxlength="160" class="input mt-1" /></label><div class="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:col-span-2 sm:flex-row sm:justify-end"><button type="button" data-cancel-curriculum class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Add record</button></div></form></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="curriculum-title" class="dialog-enter dialog-glass w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4"><h2 id="curriculum-title" class="text-lg font-bold">Add curriculum record</h2><p class="mt-1 text-xs text-slate-500">Connect the NaCCA learning hierarchy to a level and subject.</p></div><form data-curriculum-form class="grid gap-3 p-5 sm:grid-cols-2"><label class="text-xs font-semibold text-slate-600">Level<select name="levelId" required class="input mt-1">${STATE.levels.map((level) => `<option value="${escapeHtml(level.id)}">${escapeHtml(level.label)} · ${escapeHtml(level.phase)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600">Subject<select name="subjectId" required class="input mt-1">${STATE.subjects.map((subject) => `<option value="${escapeHtml(subject.id)}">${escapeHtml(subject.name)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Strand<input name="strand" required maxlength="120" class="input mt-1" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Sub-strand<input name="subStrand" maxlength="120" class="input mt-1" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Content standard<textarea name="standard" required maxlength="500" rows="2" class="input mt-1"></textarea></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Indicator<textarea name="indicator" required maxlength="500" rows="2" class="input mt-1"></textarea></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Core competency / value<input name="competencies" maxlength="160" class="input mt-1" /></label><div class="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:col-span-2 sm:flex-row sm:justify-end"><button type="button" data-cancel-curriculum class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Add record</button></div></form></section>`;
           const close = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -5148,7 +5204,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="template-title" class="dialog-enter bg-white w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="template-title" class="text-lg font-bold">Edit assessment template</h2><p class="mt-1 text-xs text-slate-500">Internal maximum recalculates from the four component maximums.</p></div><button type="button" data-close-template aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-template-form class="p-5 space-y-5"><label class="block text-xs font-semibold text-slate-600">Template name<input name="name" required maxlength="80" class="input mt-1" value="${escapeHtml(t.name)}" /></label><div class="grid sm:grid-cols-2 gap-3">${t.components.map((component, index) => `<div class="grid grid-cols-[minmax(0,1fr)_96px] gap-2"><label class="text-xs font-semibold text-slate-600">Component ${index + 1}<input name="componentName${index}" required maxlength="60" class="input mt-1" value="${escapeHtml(component.name)}" /></label><label class="text-xs font-semibold text-slate-600">Maximum<input name="componentMax${index}" type="number" min="1" max="100" required class="input mt-1" value="${escapeHtml(component.max)}" /></label></div>`).join("")}</div><div class="grid sm:grid-cols-3 gap-3"><label class="text-xs font-semibold text-slate-600">Exam maximum<input name="examMax" type="number" min="1" max="1000" required class="input mt-1" value="${escapeHtml(t.examMax)}" /></label><label class="text-xs font-semibold text-slate-600">Internal weight (%)<input name="internalWeight" type="number" min="0" max="100" required class="input mt-1" value="${escapeHtml(t.internalWeight)}" /></label><label class="text-xs font-semibold text-slate-600">Exam weight (%)<input name="examWeight" type="number" min="0" max="100" required class="input mt-1" value="${escapeHtml(t.examWeight)}" /></label></div><p data-template-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-template class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save template</button></div></form></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="template-title" class="dialog-enter dialog-glass w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="template-title" class="text-lg font-bold">Edit assessment template</h2><p class="mt-1 text-xs text-slate-500">Internal maximum recalculates from the four component maximums.</p></div><button type="button" data-close-template aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-template-form class="p-5 space-y-5"><label class="block text-xs font-semibold text-slate-600">Template name<input name="name" required maxlength="80" class="input mt-1" value="${escapeHtml(t.name)}" /></label><div class="grid sm:grid-cols-2 gap-3">${t.components.map((component, index) => `<div class="grid grid-cols-[minmax(0,1fr)_96px] gap-2"><label class="text-xs font-semibold text-slate-600">Component ${index + 1}<input name="componentName${index}" required maxlength="60" class="input mt-1" value="${escapeHtml(component.name)}" /></label><label class="text-xs font-semibold text-slate-600">Maximum<input name="componentMax${index}" type="number" min="1" max="100" required class="input mt-1" value="${escapeHtml(component.max)}" /></label></div>`).join("")}</div><div class="grid sm:grid-cols-3 gap-3"><label class="text-xs font-semibold text-slate-600">Exam maximum<input name="examMax" type="number" min="1" max="1000" required class="input mt-1" value="${escapeHtml(t.examMax)}" /></label><label class="text-xs font-semibold text-slate-600">Internal weight (%)<input name="internalWeight" type="number" min="0" max="100" required class="input mt-1" value="${escapeHtml(t.internalWeight)}" /></label><label class="text-xs font-semibold text-slate-600">Exam weight (%)<input name="examWeight" type="number" min="0" max="100" required class="input mt-1" value="${escapeHtml(t.examWeight)}" /></label></div><p data-template-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-template class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save template</button></div></form></section>`;
           const finish = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -5435,19 +5491,19 @@
               <div class="text-2xl font-black mt-1">${escapeHtml(STATE.session.name)}</div>
               <div class="text-sm text-brand-200 mt-1">Demo Community Basic School · 2026/2027 · Term 1</div>
               <div class="relative mt-5 grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="stat-card rounded-xl p-3 border border-white/10">
+                <div class="rounded-xl p-3 border border-white/10 bg-white/10 text-white backdrop-blur">
                   <div class="text-xs text-brand-200">Students</div>
                   <div class="text-2xl font-black">${students}</div>
                 </div>
-                <div class="stat-card rounded-xl p-3 border border-white/10">
+                <div class="rounded-xl p-3 border border-white/10 bg-white/10 text-white backdrop-blur">
                   <div class="text-xs text-brand-200">Teachers</div>
                   <div class="text-2xl font-black">${teachers}</div>
                 </div>
-                <div class="stat-card rounded-xl p-3 border border-white/10">
+                <div class="rounded-xl p-3 border border-white/10 bg-white/10 text-white backdrop-blur">
                   <div class="text-xs text-brand-200">Classes</div>
                   <div class="text-2xl font-black">${classes}</div>
                 </div>
-                <div class="stat-card rounded-xl p-3 border border-white/10">
+                <div class="rounded-xl p-3 border border-white/10 bg-white/10 text-white backdrop-blur">
                   <div class="text-xs text-brand-200">Assessments</div>
                   <div class="text-2xl font-black">12</div>
                 </div>
@@ -5667,7 +5723,7 @@
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
           dialog.innerHTML = `
-                  <section role="dialog" aria-modal="true" aria-labelledby="student-dialog-title" class="dialog-enter bg-white w-full sm:max-w-xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto">
+                  <section role="dialog" aria-modal="true" aria-labelledby="student-dialog-title" class="dialog-enter dialog-glass w-full sm:max-w-xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto">
                     <div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-4"><div><h2 id="student-dialog-title" class="text-lg font-bold">${editing ? "Edit learner" : "Register learner"}</h2><p class="mt-1 text-xs text-slate-500">Student information is stored in this browser.</p></div><button type="button" data-close-student aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div>
                     <form data-student-form class="p-5 space-y-4">
                       <div class="grid sm:grid-cols-2 gap-3">
@@ -5929,7 +5985,7 @@
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
           const validCount = rows.filter((item) => !item.errors.length).length;
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="import-title" class="dialog-enter bg-white w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="import-title" class="text-lg font-bold">Review student import</h2><p class="mt-1 text-xs text-slate-500">${validCount} ready to import · ${rows.length - validCount} need${rows.length - validCount === 1 ? "s" : ""} attention</p></div><button type="button" data-close-import aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><div class="p-5"><div class="max-h-72 overflow-auto rounded-lg border border-slate-200"><table class="w-full text-left text-xs"><thead class="sticky top-0 bg-slate-50"><tr><th class="p-2">Row</th><th class="p-2">Learner</th><th class="p-2">Admission</th><th class="p-2">Class</th><th class="p-2">Check</th></tr></thead><tbody class="divide-y divide-slate-100">${rows.map(({ row, cls, errors, line }) => `<tr><td class="p-2">${line}</td><td class="p-2">${escapeHtml(`${row.firstname || ""} ${row.lastname || ""}`)}</td><td class="p-2 font-mono">${escapeHtml(row.admissionno)}</td><td class="p-2">${escapeHtml(cls ? classLabel(cls) : row.classlabel)}</td><td class="p-2 ${errors.length ? "text-gh-red" : "text-gh-green"}">${errors.length ? escapeHtml(errors.join("; ")) : "Ready"}</td></tr>`).join("") || '<tr><td colspan="5" class="p-5 text-center text-slate-500">No rows found in this CSV.</td></tr>'}</tbody></table></div><div class="mt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-close-import class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="button" data-confirm-import ${validCount ? "" : "disabled"} class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50">Import ${validCount} learners</button></div></div></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="import-title" class="dialog-enter dialog-glass w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between"><div><h2 id="import-title" class="text-lg font-bold">Review student import</h2><p class="mt-1 text-xs text-slate-500">${validCount} ready to import · ${rows.length - validCount} need${rows.length - validCount === 1 ? "s" : ""} attention</p></div><button type="button" data-close-import aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><div class="p-5"><div class="max-h-72 overflow-auto rounded-lg border border-slate-200"><table class="w-full text-left text-xs"><thead class="sticky top-0 bg-slate-50"><tr><th class="p-2">Row</th><th class="p-2">Learner</th><th class="p-2">Admission</th><th class="p-2">Class</th><th class="p-2">Check</th></tr></thead><tbody class="divide-y divide-slate-100">${rows.map(({ row, cls, errors, line }) => `<tr><td class="p-2">${line}</td><td class="p-2">${escapeHtml(`${row.firstname || ""} ${row.lastname || ""}`)}</td><td class="p-2 font-mono">${escapeHtml(row.admissionno)}</td><td class="p-2">${escapeHtml(cls ? classLabel(cls) : row.classlabel)}</td><td class="p-2 ${errors.length ? "text-gh-red" : "text-gh-green"}">${errors.length ? escapeHtml(errors.join("; ")) : "Ready"}</td></tr>`).join("") || '<tr><td colspan="5" class="p-5 text-center text-slate-500">No rows found in this CSV.</td></tr>'}</tbody></table></div><div class="mt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-close-import class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="button" data-confirm-import ${validCount ? "" : "disabled"} class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50">Import ${validCount} learners</button></div></div></section>`;
           const finish = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -6043,7 +6099,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="teacher-dialog-title" class="dialog-enter bg-white w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-4"><div><h2 id="teacher-dialog-title" class="text-lg font-bold">${assignmentsOnly ? "Manage teaching assignments" : editing ? "Edit teacher" : "Register teacher"}</h2><p class="mt-1 text-xs text-slate-500">Assign subjects to classes and streams.</p></div><button type="button" data-close-teacher aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-teacher-form class="p-5 space-y-5"><fieldset ${assignmentsOnly ? "disabled" : ""} class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600">Teacher name<input name="name" required maxlength="100" class="input mt-1" value="${escapeHtml(teacher?.name || "")}" placeholder="Full name" /></label><label class="text-xs font-semibold text-slate-600">Email address<input name="email" type="email" required maxlength="120" class="input mt-1" value="${escapeHtml(teacher?.email || "")}" placeholder="teacher@school.edu.gh" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Phone number<input name="phone" type="tel" maxlength="30" class="input mt-1" value="${escapeHtml(teacher?.phone || "")}" placeholder="+233 ..." /></label></fieldset><div><div class="flex items-center justify-between gap-3"><div><h3 class="text-sm font-bold">Class and subject assignments</h3><p class="text-xs text-slate-500">Avoid assigning the same subject twice to one class.</p></div><button type="button" data-add-assignment class="edu-action rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50">+ Add assignment</button></div><div data-assignment-rows class="mt-3 space-y-2"></div></div><p data-teacher-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-teacher class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">${assignmentsOnly ? "Save assignments" : editing ? "Save teacher" : "Register teacher"}</button></div></form></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="teacher-dialog-title" class="dialog-enter dialog-glass w-full sm:max-w-2xl sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto"><div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-4"><div><h2 id="teacher-dialog-title" class="text-lg font-bold">${assignmentsOnly ? "Manage teaching assignments" : editing ? "Edit teacher" : "Register teacher"}</h2><p class="mt-1 text-xs text-slate-500">Assign subjects to classes and streams.</p></div><button type="button" data-close-teacher aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div><form data-teacher-form class="p-5 space-y-5"><fieldset ${assignmentsOnly ? "disabled" : ""} class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600">Teacher name<input name="name" required maxlength="100" class="input mt-1" value="${escapeHtml(teacher?.name || "")}" placeholder="Full name" /></label><label class="text-xs font-semibold text-slate-600">Email address<input name="email" type="email" required maxlength="120" class="input mt-1" value="${escapeHtml(teacher?.email || "")}" placeholder="teacher@school.edu.gh" /></label><label class="text-xs font-semibold text-slate-600 sm:col-span-2">Phone number<input name="phone" type="tel" maxlength="30" class="input mt-1" value="${escapeHtml(teacher?.phone || "")}" placeholder="+233 ..." /></label></fieldset><div><div class="flex items-center justify-between gap-3"><div><h3 class="text-sm font-bold">Class and subject assignments</h3><p class="text-xs text-slate-500">Avoid assigning the same subject twice to one class.</p></div><button type="button" data-add-assignment class="edu-action rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold hover:bg-slate-50">+ Add assignment</button></div><div data-assignment-rows class="mt-3 space-y-2"></div></div><p data-teacher-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-close-teacher class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">${assignmentsOnly ? "Save assignments" : editing ? "Save teacher" : "Register teacher"}</button></div></form></section>`;
           const form = $("[data-teacher-form]", dialog);
           const rows = $("[data-assignment-rows]", dialog);
           const addAssignmentRow = (assignment = {}) => {
@@ -6234,7 +6290,7 @@
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto";
           dialog.innerHTML = `
-                  <section role="dialog" aria-modal="true" aria-labelledby="class-dialog-title" class="dialog-enter bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto">
+                  <section role="dialog" aria-modal="true" aria-labelledby="class-dialog-title" class="dialog-enter dialog-glass w-full sm:max-w-lg sm:rounded-xl rounded-t-xl shadow-2xl max-h-[92vh] overflow-y-auto">
                     <div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-4"><div><h2 id="class-dialog-title" class="text-lg font-bold">${editing ? "Manage class" : "Create class or stream"}</h2><p class="mt-1 text-xs text-slate-500">Choose a level and a unique stream label.</p></div><button type="button" data-close-class aria-label="Close dialog" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100">✕</button></div>
                     <form data-class-form class="p-5 space-y-4">
                       <label class="block text-xs font-semibold text-slate-600">Level<select name="levelId" required class="input mt-1">${STATE.levels.map((level) => `<option value="${escapeHtml(level.id)}">${escapeHtml(level.label)} · ${escapeHtml(level.phase)}</option>`).join("")}</select></label>
@@ -6338,7 +6394,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="subject-title" class="dialog-enter bg-white w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="subject-title" class="text-lg font-bold">${editing ? "Edit subject" : "Add subject"}</h2><p class="mt-1 text-xs text-slate-500">Subject IDs remain stable for existing assessments.</p><form data-subject-form class="mt-4 space-y-4"><label class="block text-xs font-semibold text-slate-600">Subject name<input name="name" required maxlength="80" class="input mt-1" value="${escapeHtml(subject?.name || "")}" placeholder="e.g. Environmental Studies" /></label><p data-subject-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-cancel-subject class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">${editing ? "Save changes" : "Add subject"}</button></div></form></div></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="subject-title" class="dialog-enter dialog-glass w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="subject-title" class="text-lg font-bold">${editing ? "Edit subject" : "Add subject"}</h2><p class="mt-1 text-xs text-slate-500">Subject IDs remain stable for existing assessments.</p><form data-subject-form class="mt-4 space-y-4"><label class="block text-xs font-semibold text-slate-600">Subject name<input name="name" required maxlength="80" class="input mt-1" value="${escapeHtml(subject?.name || "")}" placeholder="e.g. Environmental Studies" /></label><p data-subject-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-cancel-subject class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">${editing ? "Save changes" : "Add subject"}</button></div></form></div></section>`;
           const finish = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -6426,7 +6482,7 @@
           const modal = document.createElement("div");
           modal.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4";
-          modal.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="structure-dialog-title" class="dialog-enter bg-white w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h3 id="structure-dialog-title" class="text-lg font-bold">${escapeHtml(title)}</h3><form class="mt-4 space-y-4"><label class="block text-xs font-semibold text-slate-600">${escapeHtml(label)}<input name="value" required maxlength="40" class="input mt-1" placeholder="${escapeHtml(placeholder)}" /></label><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-cancel class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save</button></div></form></div></section>`;
+          modal.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="structure-dialog-title" class="dialog-enter dialog-glass w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h3 id="structure-dialog-title" class="text-lg font-bold">${escapeHtml(title)}</h3><form class="mt-4 space-y-4"><label class="block text-xs font-semibold text-slate-600">${escapeHtml(label)}<input name="value" required maxlength="40" class="input mt-1" placeholder="${escapeHtml(placeholder)}" /></label><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-cancel class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save</button></div></form></div></section>`;
           const close = () => {
             modal.remove();
             document.body.classList.remove("overflow-hidden");
@@ -6549,7 +6605,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="period-title" class="dialog-enter bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="period-title" class="text-lg font-bold">Schedule assessment period</h2><p class="mt-1 text-xs text-slate-500">Choose the academic year, term and score-entry window.</p><form data-period-form class="mt-4 space-y-3"><label class="block text-xs font-semibold text-slate-600">Assessment name<input name="name" required maxlength="80" class="input mt-1" placeholder="End of Term Assessment" /></label><div class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600">Academic year<select name="yearId" class="input mt-1">${STATE.academicYears.map((year) => `<option value="${escapeHtml(year.id)}">${escapeHtml(year.label)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600">Term<select name="termId" class="input mt-1">${STATE.terms.map((term) => `<option value="${escapeHtml(term.id)}">${escapeHtml(term.label)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600">Opens<input name="opens" type="date" required class="input mt-1" /></label><label class="text-xs font-semibold text-slate-600">Closes<input name="closes" type="date" required class="input mt-1" /></label></div><p data-period-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-cancel-period class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save period</button></div></form></div></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="period-title" class="dialog-enter dialog-glass w-full sm:max-w-lg sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="period-title" class="text-lg font-bold">Schedule assessment period</h2><p class="mt-1 text-xs text-slate-500">Choose the academic year, term and score-entry window.</p><form data-period-form class="mt-4 space-y-3"><label class="block text-xs font-semibold text-slate-600">Assessment name<input name="name" required maxlength="80" class="input mt-1" placeholder="End of Term Assessment" /></label><div class="grid sm:grid-cols-2 gap-3"><label class="text-xs font-semibold text-slate-600">Academic year<select name="yearId" class="input mt-1">${STATE.academicYears.map((year) => `<option value="${escapeHtml(year.id)}">${escapeHtml(year.label)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600">Term<select name="termId" class="input mt-1">${STATE.terms.map((term) => `<option value="${escapeHtml(term.id)}">${escapeHtml(term.label)}</option>`).join("")}</select></label><label class="text-xs font-semibold text-slate-600">Opens<input name="opens" type="date" required class="input mt-1" /></label><label class="text-xs font-semibold text-slate-600">Closes<input name="closes" type="date" required class="input mt-1" /></label></div><p data-period-error class="hidden text-sm text-gh-red" role="alert"></p><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-cancel-period class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="submit" class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Save period</button></div></form></div></section>`;
           const finish = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -6737,7 +6793,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="publish-title" class="dialog-enter bg-white w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><div class="flex items-start gap-3"><div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-xl text-gh-green">✓</div><div><h2 id="publish-title" class="font-bold">Publish assessment results?</h2><p class="mt-1 text-sm text-slate-500">${scoredCount} learners in ${escapeHtml(classLabel(STATE.classes.find((item) => item.id === classSelect.value)))} · ${escapeHtml(STATE.subjects.find((item) => item.id === subjectSelect.value)?.name || "")} · ${escapeHtml(STATE.terms.find((item) => item.id === termSelect.value)?.label || "")} will be able to view their results.</p></div></div><div class="mt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-cancel-publish class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="button" data-confirm-publish class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Confirm publish</button></div></div></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="publish-title" class="dialog-enter dialog-glass w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><div class="flex items-start gap-3"><div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-xl text-gh-green">✓</div><div><h2 id="publish-title" class="font-bold">Publish assessment results?</h2><p class="mt-1 text-sm text-slate-500">${scoredCount} learners in ${escapeHtml(classLabel(STATE.classes.find((item) => item.id === classSelect.value)))} · ${escapeHtml(STATE.subjects.find((item) => item.id === subjectSelect.value)?.name || "")} · ${escapeHtml(STATE.terms.find((item) => item.id === termSelect.value)?.label || "")} will be able to view their results.</p></div></div><div class="mt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-cancel-publish class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Cancel</button><button type="button" data-confirm-publish class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Confirm publish</button></div></div></section>`;
           const finish = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -7481,7 +7537,7 @@
           const dialog = document.createElement("div");
           dialog.className =
             "fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4";
-          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="submit-title" class="dialog-enter bg-white w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="submit-title" class="font-bold">Submit scores for approval?</h2><p class="mt-1 text-sm text-slate-500">${students.length} learner records for ${escapeHtml(classLabel(cls))} · ${escapeHtml(sub.name)} · ${escapeHtml(STATE.terms.find((term) => term.id === termId)?.label || "Term")}</p><div class="mt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-cancel-submit class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Continue editing</button><button type="button" data-confirm-submit class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Submit scores</button></div></div></section>`;
+          dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="submit-title" class="dialog-enter dialog-glass w-full sm:max-w-md sm:rounded-xl rounded-t-xl shadow-2xl"><div class="p-5"><h2 id="submit-title" class="font-bold">Submit scores for approval?</h2><p class="mt-1 text-sm text-slate-500">${students.length} learner records for ${escapeHtml(classLabel(cls))} · ${escapeHtml(sub.name)} · ${escapeHtml(STATE.terms.find((term) => term.id === termId)?.label || "Term")}</p><div class="mt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button type="button" data-cancel-submit class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold">Continue editing</button><button type="button" data-confirm-submit class="edu-action btn-primary rounded-lg px-4 py-2.5 text-sm font-semibold">Submit scores</button></div></div></section>`;
           const close = () => {
             dialog.remove();
             document.body.classList.remove("overflow-hidden");
@@ -8515,10 +8571,18 @@
             scope
               .querySelectorAll(".hover\\:bg-slate-100, .hover\\:bg-slate-50")
               .forEach((el) => el.classList.add("hover-row-dark"));
+            // Tier-1 contrast contract: white/light → black ink,
+            // dim/black glass → white ink, gold only on dim/black.
+            applyContrastContract(scope);
           }
         }
       });
       darkChromeObserver.observe(document.body, { childList: true, subtree: true });
+
+      // Contract sweep: tag every static surface (landing, login, shell,
+      // sidebar) once the initial tree is in place. Late-mounted dialogs are
+      // handled by the observer above; route pages by renderApp().
+      requestAnimationFrame(() => enforceContrastEverywhere());
 
       window.addEventListener("popstate", () => {
         const routeMatch = location.hash.match(/^#\/([^/]+)\/([^/?]+)/);
