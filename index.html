@@ -980,10 +980,44 @@
          Implemented as a token layer so it can never drift again.
       ========================================================= */
       :root {
-        --ink-on-light: #0b1220;          /* near-black text on white   */
-        --ink-on-dark: #f8fafc;           /* near-white text on dim     */
-        --gold-on-dark: var(--edu-gold);  /* gold ONLY on dim surfaces  */
+        /* =====================================================
+           TIER-1 CONTRAST TOKENS — every pair below is verified
+           against WCAG 2.1 AA (body text ≥ 4.5:1, large/bold
+           text and UI borders ≥ 3:1). Ratios noted per token.
+           ===================================================== */
+        --paper: #ffffff;                 /* light canvas            */
+        --ink-on-light: #0b1220;          /* 18.9:1 on white         */
+        --muted-on-light: #4b5563;        /* 7.6:1  on white         */
+        --faint-on-light: #6b7280;        /* 4.8:1  on white         */
+        --link-on-light: #1d4ed8;         /* 6.3:1  on white         */
+        --ok-on-light: #047857;           /* 5.0:1  on white         */
+        --warn-on-light: #92400e;         /* 7.2:1  on white         */
+        --bad-on-light: #b91c1c;          /* 6.0:1  on white         */
+        --dark: #0b1220;                  /* dim/black canvas        */
+        --ink-on-dark: #f8fafc;           /* 18.5:1 on #0b1220       */
+        --muted-on-dark: rgba(226, 232, 240, 0.82); /* ≈12:1 on navy */
+        --gold-on-dark: var(--edu-gold);  /* gold ONLY on dim surfaces (~12:1 on navy) */
       }
+
+      /* Global defaults: the app's base ink is black on light surfaces */
+      body { color: var(--ink-on-light); }
+      .text-slate-800, .text-slate-700, .text-gray-800, .text-gray-700 {
+        color: var(--ink-on-light);
+      }
+      .text-slate-500, .text-slate-600, .text-gray-500, .text-gray-600 {
+        color: var(--muted-on-light);
+      }
+      .text-slate-400, .text-gray-400 { color: var(--faint-on-light); }
+      .text-brand-700, .text-brand-800, .text-blue-700, .text-blue-800 {
+        color: var(--link-on-light);
+      }
+      .text-gh-green, .text-emerald-700, .text-emerald-800, .text-green-700 {
+        color: var(--ok-on-light);
+      }
+      .text-rose-700, .text-rose-800, .text-red-700, .text-gh-red {
+        color: var(--bad-on-light);
+      }
+      ::selection { background: rgba(20, 71, 209, 0.18); color: #000; }
 
       /* ---- Light-surface tokens (black ink contract) ---- */
       .surface-light {
@@ -993,22 +1027,52 @@
       .surface-light h4, .surface-light p, .surface-light span,
       .surface-light td, .surface-light th, .surface-light li,
       .surface-light label, .surface-light dt, .surface-light dd,
-      .surface-light summary, .surface-light strong, .surface-light b {
+      .surface-light summary, .surface-light strong, .surface-light b,
+      .surface-light a {
         color: var(--ink-on-light) !important;
       }
-      .surface-light .text-slate-500, .surface-light .text-slate-600 {
-        color: #374151 !important;   /* AA ≥ 4.5:1 on white */
+      /* Muted copy stays AA-readable without going pure black */
+      .surface-light .text-slate-500, .surface-light .text-slate-600,
+      .surface-light .text-gray-500, .surface-light .text-gray-600 {
+        color: var(--muted-on-light) !important;
       }
-      .surface-light .text-slate-400 { color: #4b5563 !important; }
-      .surface-light .text-brand-200 { color: #1e40af !important; }
+      .surface-light .text-slate-400, .surface-light .text-gray-400 {
+        color: var(--faint-on-light) !important;
+      }
+      /* Semantic inks lifted to AA-safe values on white */
+      .surface-light .text-brand-700, .surface-light .text-brand-800,
+      .surface-light .text-brand-600, .surface-light .text-blue-700,
+      .surface-light .text-indigo-700 { color: var(--link-on-light) !important; }
+      .surface-light .text-emerald-600, .surface-light .text-emerald-700,
+      .surface-light .text-emerald-800, .surface-light .text-green-700,
+      .surface-light .text-teal-700, .surface-light .text-gh-green {
+        color: var(--ok-on-light) !important;
+      }
+      .surface-light .text-rose-600, .surface-light .text-rose-700,
+      .surface-light .text-rose-800, .surface-light .text-red-700,
+      .surface-light .text-orange-700, .surface-light .text-gh-red {
+        color: var(--bad-on-light) !important;
+      }
+      .surface-light .text-amber-600, .surface-light .text-amber-700,
+      .surface-light .text-amber-800, .surface-light .text-yellow-700 {
+        color: var(--warn-on-light) !important;
+      }
+      .surface-light .text-brand-200, .surface-light .text-brand-100,
+      .surface-light .text-blue-200 { color: var(--link-on-light) !important; }
       .surface-light .text-gold-500, .surface-light .text-gold-600,
-      .surface-light .text-amber-500 { color: #7a5c00 !important; } /* gold stripped */
-      .surface-light input, .surface-light select, .surface-light textarea {
+      .surface-light .text-gold-400, .surface-light .text-amber-500,
+      .surface-light .text-yellow-500 { color: var(--warn-on-light) !important; } /* gold stripped */
+      .surface-light input, .surface-light select, .surface-light textarea,
+      .surface-light button:not(.btn-primary):not([class*="bg-slate-8"]):not([class*="bg-brand-8"]) {
         color: var(--ink-on-light) !important;
       }
       .surface-light input::placeholder,
-      .surface-light textarea::placeholder { color: #4b5563 !important; }
+      .surface-light textarea::placeholder { color: var(--faint-on-light) !important; }
       .surface-light svg { color: inherit; }
+      /* Lightened hairlines inside light cards keep structure visible */
+      .surface-light .border-slate-100, .surface-light .divide-slate-100 > * + * {
+        border-color: #dbe3ef !important;
+      }
 
       /* ---- Dark-surface tokens (white ink + legal gold) ---- */
       .surface-dark {
@@ -1018,23 +1082,25 @@
       .surface-dark h4, .surface-dark p, .surface-dark span,
       .surface-dark td, .surface-dark th, .surface-dark li,
       .surface-dark label, .surface-dark dt, .surface-dark dd,
-      .surface-dark summary, .surface-dark strong, .surface-dark b {
+      .surface-dark summary, .surface-dark strong, .surface-dark b,
+      .surface-dark a {
         color: var(--ink-on-dark) !important;
       }
       .surface-dark .text-slate-500, .surface-dark .text-slate-600,
       .surface-dark .text-slate-400, .surface-dark .text-slate-700 {
-        color: rgba(226, 232, 240, 0.78) !important;
+        color: var(--muted-on-dark) !important;
       }
       .surface-dark .text-brand-200 { color: #bfdbfe !important; }
       .surface-dark .text-gold-500, .surface-dark .text-gold-600,
-      .surface-dark .text-amber-500, .surface-dark .text-amber-600 {
+      .surface-dark .text-gold-400, .surface-dark .text-amber-500,
+      .surface-dark .text-amber-600 {
         color: var(--gold-on-dark) !important;
       }
       .surface-dark input, .surface-dark select, .surface-dark textarea {
         color: var(--ink-on-dark) !important;
       }
       .surface-dark input::placeholder,
-      .surface-dark textarea::placeholder { color: rgba(203, 213, 225, 0.55) !important; }
+      .surface-dark textarea::placeholder { color: rgba(203, 213, 225, 0.6) !important; }
       .surface-dark option { color: #0b1220; background: #fff; }
       .surface-dark svg { color: inherit; }
 
@@ -2960,7 +3026,7 @@
         // tinted chips (bg-brand-950/60, bg-slate-950/40, bg-gh-green/15)
         // and inline rgba() washes all sit on the navy canvas → dark ink.
         for (const tok of el.classList) {
-          if (/^bg-white\/(?:5|10|15|20|25)$/.test(tok)) return true;
+          if (/^bg-white\/(?:5|10|15|20|25|50)$/.test(tok)) return true;
           if (/^bg-(?:brand|slate|gray|navy)-(?:800|900|950)\/\d+$/.test(tok)) return true;
           if (/^bg-gh-(?:green|red|gold)\/\d+$/.test(tok)) return true;
         }
@@ -3009,7 +3075,7 @@
                 for (const g of CONTRAST_RULES.goldInk) {
                   if (child.classList.contains(g)) {
                     child.classList.remove(g);
-                    child.classList.add("text-amber-800"); // accessible warm ink
+                    child.classList.add("text-amber-800"); // AA-safe warm ink
                   }
                 }
               }
@@ -5151,7 +5217,7 @@
             </div>
             <button data-edit-template type="button" class="edu-action btn-primary w-full sm:w-auto px-4 py-2 text-sm rounded-lg font-semibold">Edit active template</button>
           </div>
-          <div data-template-summary class="bg-white rounded-xl border border-slate-200 p-5 sm:p-6"></div>
+          <div data-template-summary class="page-card surface-light bg-white rounded-xl border border-slate-200 p-5 sm:p-6"></div>
         `;
         const renderTemplate = () => {
           const t = STATE.assessmentTemplate;
