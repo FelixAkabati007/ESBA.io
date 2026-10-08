@@ -222,6 +222,274 @@
           border-radius: 1rem 1rem 0 0;
         }
       }
+
+      /* =========================================================
+         LUXURY EDU DESIGN SYSTEM — glassmorphism, embossed depth,
+         custom SVG iconography and keyframe animations.
+         Inspired by the "Educational App || Mobile app Concept"
+         Figma community design: deep navy canvas, gold accents,
+         soft frosted cards with layered light/shadow relief.
+      ========================================================= */
+      :root {
+        --edu-glass: rgba(255, 255, 255, 0.72);
+        --edu-glass-strong: rgba(255, 255, 255, 0.86);
+        --edu-glass-border: rgba(255, 255, 255, 0.65);
+        --edu-gold: #fcd116;
+        --edu-aurora: radial-gradient(
+            60rem 30rem at 8% -10%,
+            rgba(20, 71, 209, 0.1),
+            transparent 60%
+          ),
+          radial-gradient(
+            50rem 26rem at 110% 8%,
+            rgba(252, 209, 22, 0.12),
+            transparent 55%
+          ),
+          radial-gradient(
+            40rem 30rem at 50% 120%,
+            rgba(0, 107, 63, 0.08),
+            transparent 60%
+          );
+      }
+      body {
+        background-color: #eef2fa;
+        background-image: var(--edu-aurora);
+        background-attachment: fixed;
+      }
+      /* Glass card */
+      .glass-card {
+        background: linear-gradient(
+          160deg,
+          var(--edu-glass-strong),
+          var(--edu-glass)
+        );
+        -webkit-backdrop-filter: blur(14px) saturate(1.4);
+        backdrop-filter: blur(14px) saturate(1.4);
+        border: 1px solid var(--edu-glass-border);
+        border-radius: 1.25rem;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset,
+          0 -1px 0 rgba(15, 31, 74, 0.04) inset,
+          0 12px 32px -12px rgba(15, 31, 74, 0.18),
+          0 2px 6px rgba(15, 31, 74, 0.05);
+        transition: transform 0.25s ease, box-shadow 0.25s ease,
+          border-color 0.25s ease;
+      }
+      .glass-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.95) inset,
+          0 18px 44px -14px rgba(15, 31, 74, 0.26),
+          0 4px 10px rgba(15, 31, 74, 0.07);
+      }
+      /* Embossed container with sculpted depth */
+      .embossed {
+        background: linear-gradient(180deg, #ffffff 0%, #f6f9fe 100%);
+        border: 1px solid rgba(15, 31, 74, 0.08);
+        border-radius: 1.25rem;
+        box-shadow: 6px 6px 18px rgba(15, 31, 74, 0.1),
+          -6px -6px 18px rgba(255, 255, 255, 0.9),
+          inset 1px 1px 0 rgba(255, 255, 255, 1),
+          inset -1px -1px 0 rgba(15, 31, 74, 0.04);
+      }
+      .embossed-inset {
+        background: linear-gradient(180deg, #eef2fa 0%, #f8fafd 100%);
+        box-shadow: inset 3px 3px 8px rgba(15, 31, 74, 0.1),
+          inset -3px -3px 8px rgba(255, 255, 255, 0.95);
+        border-radius: 0.9rem;
+      }
+      /* Gold shimmer sweep for premium CTAs & headers */
+      .gold-shimmer {
+        position: relative;
+        overflow: hidden;
+      }
+      .gold-shimmer::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          115deg,
+          transparent 30%,
+          rgba(252, 209, 22, 0.28) 48%,
+          rgba(255, 255, 255, 0.35) 52%,
+          transparent 70%
+        );
+        transform: translateX(-120%);
+        animation: eduSweep 5.5s ease-in-out infinite;
+        pointer-events: none;
+      }
+      @keyframes eduSweep {
+        0%,
+        55% {
+          transform: translateX(-120%);
+        }
+        85%,
+        100% {
+          transform: translateX(120%);
+        }
+      }
+      /* Floating hero ornaments */
+      .float-slow {
+        animation: eduFloat 7s ease-in-out infinite;
+      }
+      .float-slower {
+        animation: eduFloat 10s ease-in-out 1.2s infinite;
+      }
+      @keyframes eduFloat {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(2deg);
+        }
+      }
+      /* Glowing ring pulse (live/system status) */
+      .edu-pulse {
+        position: relative;
+      }
+      .edu-pulse::before {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 9999px;
+        background: rgba(0, 107, 63, 0.35);
+        animation: eduPulse 2.2s ease-out infinite;
+        z-index: -1;
+      }
+      @keyframes eduPulse {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.9;
+        }
+        100% {
+          transform: scale(1.9);
+          opacity: 0;
+        }
+      }
+      /* Animated gradient text */
+      .edu-gradient-text {
+        background: linear-gradient(
+          100deg,
+          #0f1f4a 15%,
+          #1447d1 45%,
+          #d89c00 70%,
+          #0f1f4a 95%
+        );
+        background-size: 220% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: eduTextFlow 8s linear infinite;
+      }
+      @keyframes eduTextFlow {
+        to {
+          background-position: -220% 0;
+        }
+      }
+      /* Staggered entrance for grids/lists */
+      .stagger-in > * {
+        animation: riseIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .stagger-in > *:nth-child(1) { animation-delay: 0.03s; }
+      .stagger-in > *:nth-child(2) { animation-delay: 0.07s; }
+      .stagger-in > *:nth-child(3) { animation-delay: 0.11s; }
+      .stagger-in > *:nth-child(4) { animation-delay: 0.15s; }
+      .stagger-in > *:nth-child(5) { animation-delay: 0.19s; }
+      .stagger-in > *:nth-child(6) { animation-delay: 0.23s; }
+      .stagger-in > *:nth-child(7) { animation-delay: 0.27s; }
+      .stagger-in > *:nth-child(8) { animation-delay: 0.31s; }
+      .stagger-in > *:nth-child(n + 9) { animation-delay: 0.35s; }
+      @keyframes riseIn {
+        from {
+          opacity: 0;
+          transform: translateY(14px) scale(0.985);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      /* Custom SVG icon chip */
+      .icon-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        flex-shrink: 0;
+        border-radius: 0.85rem;
+        color: #1447d1;
+        background: linear-gradient(180deg, #ffffff, #eaf1ff);
+        border: 1px solid rgba(15, 31, 74, 0.08);
+        box-shadow: 3px 3px 8px rgba(15, 31, 74, 0.12),
+          -3px -3px 8px rgba(255, 255, 255, 0.95),
+          inset 1px 1px 0 #fff;
+      }
+      .icon-chip svg {
+        width: 1.35rem;
+        height: 1.35rem;
+      }
+      .icon-chip.gold {
+        color: #92600a;
+        background: linear-gradient(180deg, #fff8e1, #fdeec2);
+      }
+      .icon-chip.green {
+        color: #006b3f;
+        background: linear-gradient(180deg, #e9fbf2, #d2f2e2);
+      }
+      .icon-chip.red {
+        color: #b3121f;
+        background: linear-gradient(180deg, #fdecec, #fbd9dc);
+      }
+      .icon-chip.navy {
+        color: #fcd116;
+        background: linear-gradient(160deg, #163ba6, #0f1f4a);
+        border-color: rgba(15, 31, 74, 0.35);
+      }
+      /* Sidebar glass rail with active glow bar */
+      .sidebar-link.active {
+        background: linear-gradient(90deg, #eef6ff, rgba(252, 209, 22, 0.12));
+        color: #1447d1;
+        border-left-color: #1447d1;
+        box-shadow: inset 0 0 0 1px rgba(20, 71, 209, 0.08),
+          0 4px 12px -4px rgba(20, 71, 209, 0.25);
+      }
+      .sidebar-link.active svg {
+        filter: drop-shadow(0 0 6px rgba(20, 71, 209, 0.45));
+      }
+      /* Table header gilded underline */
+      table thead tr {
+        position: relative;
+      }
+      table thead::after {
+        content: "";
+        display: block;
+        height: 2px;
+        background: linear-gradient(90deg, #1447d1, #fcd116, transparent);
+      }
+      /* Progress meter shimmer fill */
+      .meter-fill {
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.35),
+          transparent 40%
+        );
+        animation: eduTextFlow 3s linear infinite;
+        background-size: 220% 100%;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .gold-shimmer::after,
+        .float-slow,
+        .float-slower,
+        .edu-pulse::before,
+        .edu-gradient-text,
+        .stagger-in > *,
+        .meter-fill {
+          animation: none !important;
+        }
+        .glass-card:hover {
+          transform: none;
+        }
+      }
       @keyframes heroZoom {
         from {
           transform: scale(1.02) translate3d(0, 0, 0);
