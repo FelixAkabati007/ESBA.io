@@ -13,18 +13,21 @@ import {
   ShieldCheck,
   CheckCircle,
   Menu,
+  KeyRound,
 } from "lucide-react";
 
 interface HeaderNavigationProps {
   currentRole: UserRole;
   onRoleChange: (role: UserRole) => void;
   onOpenVerifier: () => void;
+  onOpenPasswordRecovery?: () => void;
 }
 
 export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   currentRole,
   onRoleChange,
   onOpenVerifier,
+  onOpenPasswordRecovery,
 }) => {
   const roles: Array<{ role: UserRole; label: string; icon: any; color: string }> = [
     {
@@ -101,8 +104,19 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
           })}
         </div>
 
-        {/* Public Verifier Shortcut */}
-        <div className="flex items-center gap-3">
+        {/* Right Shortcuts */}
+        <div className="flex items-center gap-2">
+          {onOpenPasswordRecovery && (
+            <button
+              onClick={onOpenPasswordRecovery}
+              title="Password Recovery & Security Reset"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-lg text-xs font-semibold transition-colors"
+            >
+              <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+              Recovery
+            </button>
+          )}
+
           <button
             onClick={onOpenVerifier}
             className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold transition-colors"

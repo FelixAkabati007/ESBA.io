@@ -5,7 +5,17 @@
 // ======================================================================================
 
 import React, { useState } from "react";
-import { UserRole, School, StudentProfile, TeacherProfile, AssessmentScoreRecord, ReportCard, SubscriptionException } from "./types";
+import {
+  UserRole,
+  School,
+  StudentProfile,
+  TeacherProfile,
+  AssessmentScoreRecord,
+  ReportCard,
+  SubscriptionException,
+  AttendanceRecord,
+  CorrectionRequest,
+} from "./types";
 import {
   DEMO_SCHOOL,
   DEMO_SUBSCRIPTION_PLANS,
@@ -22,16 +32,25 @@ import {
   DEMO_SCORE_RECORDS,
   DEMO_REPORTS,
   DEMO_AUDIT_LOGS,
+  DEMO_ATTENDANCE,
 } from "./data/mockData";
-import { DEFAULT_NACCA_SBA_TEMPLATE } from "./services/assessmentCalculator";
+import {
+  DEFAULT_NACCA_SBA_TEMPLATE,
+  DEFAULT_NINE_POINT_GRADING_SCALE,
+  calculateAssessmentScores,
+} from "./services/assessmentCalculator";
 import { HeaderNavigation } from "./components/common/HeaderNavigation";
 import { MainAdminDashboard } from "./components/admin/MainAdminDashboard";
 import { SchoolAdminDashboard } from "./components/school/SchoolAdminDashboard";
 import { TeacherPortal } from "./components/teacher/TeacherPortal";
 import { StudentPortal } from "./components/student/StudentPortal";
 import { OfficialReportCard } from "./components/reports/OfficialReportCard";
+import { BulkClassReports } from "./components/reports/BulkClassReports";
 import { PublicReportVerifier } from "./components/verification/PublicReportVerifier";
 import { ImportCenter } from "./components/imports/ImportCenter";
+import { ExportCenter } from "./components/exports/ExportCenter";
+import { ScoreCorrectionModal } from "./components/corrections/ScoreCorrectionModal";
+import { PasswordRecoveryModal } from "./components/auth/PasswordRecoveryModal";
 import { ShieldCheck, ArrowLeft, X } from "lucide-react";
 
 export default function App() {
@@ -47,13 +66,22 @@ export default function App() {
   const [students, setStudents] = useState<StudentProfile[]>(DEMO_STUDENTS);
   const [scores, setScores] = useState<AssessmentScoreRecord[]>(DEMO_SCORE_RECORDS);
   const [reports, setReports] = useState<ReportCard[]>(DEMO_REPORTS);
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>(DEMO_ATTENDANCE);
   const [auditLogs, setAuditLogs] = useState(DEMO_AUDIT_LOGS);
   const [templates, setTemplates] = useState([DEFAULT_NACCA_SBA_TEMPLATE]);
+  const [correctionRequests, setCorrectionRequests] = useState<CorrectionRequest[]>([]);
 
   // Modal / View states
   const [selectedStudentForReport, setSelectedStudentForReport] = useState<StudentProfile | null>(null);
+  const [showBulkPrintClassId, setShowBulkPrintClassId] = useState<string | null>(null);
   const [showPublicVerifier, setShowPublicVerifier] = useState(false);
   const [showImportCenter, setShowImportCenter] = useState(false);
+  const [showExportCenter, setShowExportCenter] = useState(false);
+  const [showPasswordRecovery, setShowPasswordRecovery] = useState(false);
+  const [activeCorrectionTarget, setActiveCorrectionTarget] = useState<{
+    scoreRecord: AssessmentScoreRecord;
+    student: StudentProfile;
+  } | null>(null);
 
   // Active tenant school
   const currentSchool = schools[0] || DEMO_SCHOOL;
@@ -79,7 +107,6 @@ export default function App() {
     };
     setSchools((prev) => [newSchool, ...prev]);
 
-    // Log action
     setAuditLogs((prev) => [
       {
         id: `LOG_${Date.now()}`,
@@ -181,7 +208,22 @@ export default function App() {
     );
   };
 
-  // Handlers for Teacher
+  const handleSaveAttendance = (records: AttendanceRecord[]) => {
+    setAttendance((prev) => {
+      const copy = [...prev];
+      records.forEach((rec) => {
+        const idx = copy.findIndex((a) => a.studentId === rec.studentId && a.date === rec.date);
+        if (idx >= 0) {
+          copy[idx] = rec;
+        } else {
+          copy.push(rec);
+        }
+      });
+      return copy;
+    });
+  };
+
+  // Handlers for Teacher Score Entry
   const handleSaveScores = (updatedScores: AssessmentScoreRecord[]) => {
     setScores((prev) => {
       const copy = [...prev];
@@ -209,6 +251,107 @@ export default function App() {
     );
   };
 
+  // Handlers for Score Corrections (Section 24)
+  const handleRequestCorrection = (reqData: Partial<CorrectionRequest>) => {
+    const newReq: CorrectionRequest = {
+      id: `CORR_${Date.now()}`,
+      schoolId: reqData.schoolId || currentSchool.id,
+      scoreRecordId: reqData.scoreRecordId || "",
+      studentId: reqData.studentId || "",
+      subjectId: reqData.subjectId || "",
+      componentId: reqData.componentId || "comp_end_exam",
+      oldValue: reqData.oldValue || 0,
+      proposedValue: reqData.proposedValue || 0,
+      reason: reqData.reason || "",
+      requestedBy: reqData.requestedBy || "Teacher",
+      requestedAt: new Date().toISOString(),
+      status: "PENDING",
+    };
+    setCorrectionRequests((prev) => [newReq, ...prev]);
+
+    setAuditLogs((prev) => [
+      {
+        id: `LOG_${Date.now()}`,
+        userId: "USR_TEACHER_1",
+        userName: "Mr. Kofi Mensah",
+        userRole: "TEACHER",
+        action: "UPDATE",
+        entityType: "score_corrections",
+        entityId: newReq.id,
+        newValue: `Requested correction: ${newReq.oldValue} -> ${newReq.proposedValue} (${newReq.reason})`,
+        createdAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+  };
+
+  const handleApproveCorrection = (requestId: string) => {
+    const targetReq = correctionRequests.find((r) => r.id === requestId);
+    if (!targetReq) return;
+
+    // 1. Update the score record
+    setScores((prev) =>
+      prev.map((s) => {
+        if (s.id === targetReq.scoreRecordId || (s.studentId === targetReq.studentId && s.subjectId === targetReq.subjectId)) {
+          const compScores = { ...s.componentScores };
+          let newExamRaw = s.examRaw;
+          if (targetReq.componentId === "comp_end_exam") {
+            newExamRaw = targetReq.proposedValue;
+          } else {
+            compScores[targetReq.componentId] = targetReq.proposedValue;
+          }
+
+          const calc = calculateAssessmentScores(DEFAULT_NACCA_SBA_TEMPLATE, DEFAULT_NINE_POINT_GRADING_SCALE, {
+            ...compScores,
+            comp_end_exam: newExamRaw,
+          });
+
+          return {
+            ...s,
+            componentScores: compScores,
+            internalTotal: calc.internalTotal,
+            internalScaled: calc.internalScaled,
+            examRaw: calc.examRaw,
+            examScaled: calc.examScaled,
+            finalTotal: calc.finalTotal,
+            grade: calc.grade,
+            descriptor: calc.descriptor,
+            remark: calc.remark,
+            version: s.version + 1,
+            status: "AMENDED",
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return s;
+      })
+    );
+
+    // 2. Mark correction approved
+    setCorrectionRequests((prev) =>
+      prev.map((r) =>
+        r.id === requestId
+          ? { ...r, status: "APPROVED", approvedBy: "Head of Institution", approvedAt: new Date().toISOString() }
+          : r
+      )
+    );
+
+    // 3. Invalidate previous digital signature and bump report version (Section 27)
+    setReports((prev) =>
+      prev.map((rep) =>
+        rep.studentId === targetReq.studentId
+          ? {
+              ...rep,
+              version: rep.version + 1,
+              headTeacherSigned: false, // requires re-signing
+              classTeacherSigned: false,
+              resultHash: `amended_hash_${Date.now()}`,
+              updatedAt: new Date().toISOString(),
+            }
+          : rep
+      )
+    );
+  };
+
   // Lookups for reports
   const studentForReport = selectedStudentForReport || students[0];
   const reportForSelectedStudent =
@@ -225,8 +368,10 @@ export default function App() {
         onRoleChange={(role) => {
           setCurrentRole(role);
           setSelectedStudentForReport(null);
+          setShowBulkPrintClassId(null);
         }}
         onOpenVerifier={() => setShowPublicVerifier(true)}
+        onOpenPasswordRecovery={() => setShowPasswordRecovery(true)}
       />
 
       {/* 2. Main Content Area */}
@@ -259,12 +404,18 @@ export default function App() {
             terms={DEMO_TERMS}
             scoreRecords={scores}
             reportCards={reports}
+            correctionRequests={correctionRequests}
+            attendanceRecords={attendance}
             onAddStudent={handleAddStudent}
             onAddTeacher={(tch) => {}}
             onApproveResults={handleApproveResults}
             onPublishReports={handlePublishReports}
             onOpenImportCenter={() => setShowImportCenter(true)}
+            onOpenExportCenter={() => setShowExportCenter(true)}
             onOpenReportCard={(st) => setSelectedStudentForReport(st)}
+            onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
+            onSaveAttendance={handleSaveAttendance}
+            onApproveCorrection={handleApproveCorrection}
           />
         )}
 
@@ -280,6 +431,11 @@ export default function App() {
             onSaveScores={handleSaveScores}
             onSubmitScores={handleSubmitScores}
             onPreviewReport={(st) => setSelectedStudentForReport(st)}
+            onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
+            onOpenAttendance={() => setCurrentRole("SCHOOL_ADMIN")}
+            onOpenCorrectionModal={(rec, st) =>
+              setActiveCorrectionTarget({ scoreRecord: rec, student: st })
+            }
           />
         )}
 
@@ -297,8 +453,8 @@ export default function App() {
         )}
       </main>
 
-      {/* 3. Official Report Card Modal */}
-      {selectedStudentForReport && (
+      {/* 3. Official Individual Report Card Modal */}
+      {selectedStudentForReport && !showBulkPrintClassId && (
         <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-4 flex justify-center items-start print:p-0 print:bg-white print:fixed">
           <div className="relative w-full max-w-4xl my-8 print:my-0">
             <button
@@ -321,7 +477,24 @@ export default function App() {
         </div>
       )}
 
-      {/* 4. Public Report Verifier Modal */}
+      {/* 4. Bulk Class Reports Modal (Sections 29, 30, 60) */}
+      {showBulkPrintClassId && (
+        <div className="fixed inset-0 z-50 bg-slate-100 overflow-y-auto print:p-0 print:bg-white">
+          <BulkClassReports
+            school={currentSchool}
+            students={students.filter((s) => s.currentClassId === showBulkPrintClassId)}
+            academicYear={currentAcademicYear}
+            term={currentTerm}
+            reportCards={reports}
+            scores={scores}
+            subjects={DEMO_SUBJECTS}
+            className={DEMO_CLASSES.find((c) => c.id === showBulkPrintClassId)?.name || "JHS 1"}
+            onClose={() => setShowBulkPrintClassId(null)}
+          />
+        </div>
+      )}
+
+      {/* 5. Public Report Verifier Modal */}
       {showPublicVerifier && (
         <div className="fixed inset-0 z-50 bg-black/50 p-4 flex items-center justify-center">
           <div className="relative w-full max-w-xl">
@@ -337,7 +510,7 @@ export default function App() {
         </div>
       )}
 
-      {/* 5. Excel Import Center Modal */}
+      {/* 6. Excel Import Center Modal */}
       {showImportCenter && (
         <div className="fixed inset-0 z-50 bg-black/50 p-4 flex items-center justify-center overflow-y-auto">
           <div className="relative w-full max-w-4xl my-8">
@@ -347,6 +520,42 @@ export default function App() {
             />
           </div>
         </div>
+      )}
+
+      {/* 7. Institutional Export Center Modal (Section 39) */}
+      {showExportCenter && (
+        <div className="fixed inset-0 z-50 bg-black/50 p-4 flex items-center justify-center overflow-y-auto">
+          <div className="relative w-full max-w-3xl my-8">
+            <ExportCenter
+              students={students}
+              teachers={teachers}
+              classes={DEMO_CLASSES}
+              subjects={DEMO_SUBJECTS}
+              scores={scores}
+              attendance={attendance}
+              onClose={() => setShowExportCenter(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* 8. Score Correction Request Modal (Section 24) */}
+      {activeCorrectionTarget && (
+        <ScoreCorrectionModal
+          scoreRecord={activeCorrectionTarget.scoreRecord}
+          student={activeCorrectionTarget.student}
+          subjectName={
+            DEMO_SUBJECTS.find((s) => s.id === activeCorrectionTarget.scoreRecord.subjectId)?.name ||
+            "Mathematics"
+          }
+          onRequestCorrection={handleRequestCorrection}
+          onClose={() => setActiveCorrectionTarget(null)}
+        />
+      )}
+
+      {/* 9. Password Recovery Modal (Section 33) */}
+      {showPasswordRecovery && (
+        <PasswordRecoveryModal onClose={() => setShowPasswordRecovery(false)} />
       )}
     </div>
   );

@@ -33,6 +33,7 @@ import {
   Printer,
   Search,
   Lock,
+  Calendar,
 } from "lucide-react";
 
 interface TeacherPortalProps {
@@ -46,6 +47,9 @@ interface TeacherPortalProps {
   onSaveScores: (updatedScores: AssessmentScoreRecord[]) => void;
   onSubmitScores: (subjectId: string, classId: string) => void;
   onPreviewReport: (student: StudentProfile) => void;
+  onOpenBulkPrint?: (classId: string) => void;
+  onOpenAttendance?: () => void;
+  onOpenCorrectionModal?: (scoreRecord: AssessmentScoreRecord, student: StudentProfile) => void;
 }
 
 export const TeacherPortal: React.FC<TeacherPortalProps> = ({
@@ -59,6 +63,9 @@ export const TeacherPortal: React.FC<TeacherPortalProps> = ({
   onSaveScores,
   onSubmitScores,
   onPreviewReport,
+  onOpenBulkPrint,
+  onOpenAttendance,
+  onOpenCorrectionModal,
 }) => {
   // Selected assignment
   const [selectedAssignmentId, setSelectedAssignmentId] = useState<string>(
@@ -328,7 +335,27 @@ export const TeacherPortal: React.FC<TeacherPortalProps> = ({
             </select>
           </div>
 
-          <div className="flex items-center gap-2 pt-4 md:pt-3">
+          <div className="flex flex-wrap items-center gap-2 pt-4 md:pt-3">
+            {onOpenAttendance && (
+              <button
+                onClick={onOpenAttendance}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs"
+              >
+                <Calendar className="w-4 h-4 text-indigo-700" />
+                Attendance
+              </button>
+            )}
+
+            {onOpenBulkPrint && currentAssignment && (
+              <button
+                onClick={() => onOpenBulkPrint(currentAssignment.classId)}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs"
+              >
+                <Printer className="w-4 h-4 text-indigo-700" />
+                Bulk Print A4
+              </button>
+            )}
+
             <button
               onClick={handleSave}
               disabled={isReadOnly}
@@ -585,13 +612,56 @@ export const TeacherPortal: React.FC<TeacherPortalProps> = ({
 
                     {/* Action */}
                     <td className="p-2 text-center">
-                      <button
-                        onClick={() => onPreviewReport(row.student)}
-                        title="Preview Terminal Report Card"
-                        className="p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded"
-                      >
-                        <FileText className="w-4 h-4 inline" />
-                      </button>
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => onPreviewReport(row.student)}
+                          title="Preview Terminal Report Card"
+                          className="p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded"
+                        >
+                          <FileText className="w-4 h-4 inline" />
+                        </button>
+
+                        {isReadOnly && onOpenCorrectionModal && currentAssignment && (
+                          <button
+                            onClick={() => {
+                              const rec = initialScores.find(
+                                (s) =>
+                                  s.studentId === row.student.id &&
+                                  s.subjectId === currentAssignment.subjectId
+                              ) || {
+                                id: `SCR_${row.student.id}_${currentAssignment.subjectId}`,
+                                schoolId: row.student.schoolId,
+                                academicYearId: currentAssignment.academicYearId,
+                                termId: currentAssignment.termId,
+                                studentId: row.student.id,
+                                classId: currentAssignment.classId,
+                                streamId: currentAssignment.streamId,
+                                subjectId: currentAssignment.subjectId,
+                                templateId: DEFAULT_NACCA_SBA_TEMPLATE.id,
+                                componentScores: row.rawComponents,
+                                internalTotal: row.internalTotal,
+                                internalScaled: row.internalScaled,
+                                examRaw: row.examRaw,
+                                examScaled: row.examScaled,
+                                finalTotal: row.finalTotal,
+                                grade: row.grade,
+                                descriptor: row.descriptor,
+                                remark: row.remark,
+                                status: submissionStatus,
+                                enteredBy: "TCH_001",
+                                enteredAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
+                                version: 1,
+                              };
+                              onOpenCorrectionModal(rec, row.student);
+                            }}
+                            title="Request Score Correction"
+                            className="p-1 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded"
+                          >
+                            <AlertCircle className="w-4 h-4 inline" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );

@@ -26,6 +26,7 @@ import {
   FileText,
   Printer,
   Upload,
+  Download,
   Settings,
   Plus,
   Search,
@@ -34,8 +35,11 @@ import {
   FileCheck,
   ShieldCheck,
   Wand2,
+  AlertCircle,
 } from "lucide-react";
 import { formatOrdinalPosition } from "../../services/assessmentCalculator";
+import { AttendanceModule } from "../attendance/AttendanceModule";
+import { CorrectionRequest, AttendanceRecord } from "../../types";
 
 interface SchoolAdminDashboardProps {
   school: School;
@@ -49,12 +53,18 @@ interface SchoolAdminDashboardProps {
   terms: Term[];
   scoreRecords: AssessmentScoreRecord[];
   reportCards: ReportCard[];
+  correctionRequests?: CorrectionRequest[];
+  attendanceRecords?: AttendanceRecord[];
   onAddStudent: (student: Partial<StudentProfile>) => void;
   onAddTeacher: (teacher: Partial<TeacherProfile>) => void;
   onApproveResults: (classId: string, subjectId: string) => void;
   onPublishReports: (classId: string) => void;
   onOpenImportCenter: () => void;
+  onOpenExportCenter?: () => void;
   onOpenReportCard: (student: StudentProfile) => void;
+  onOpenBulkPrint?: (classId: string) => void;
+  onSaveAttendance?: (records: AttendanceRecord[]) => void;
+  onApproveCorrection?: (requestId: string) => void;
 }
 
 export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
@@ -69,15 +79,21 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
   terms,
   scoreRecords,
   reportCards,
+  correctionRequests = [],
+  attendanceRecords = [],
   onAddStudent,
   onAddTeacher,
   onApproveResults,
   onPublishReports,
   onOpenImportCenter,
+  onOpenExportCenter,
   onOpenReportCard,
+  onOpenBulkPrint,
+  onSaveAttendance,
+  onApproveCorrection,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "students" | "teachers" | "classes" | "moderation" | "reports" | "wizard"
+    "overview" | "students" | "teachers" | "classes" | "moderation" | "attendance" | "reports" | "wizard"
   >("overview");
 
   const [studentSearch, setStudentSearch] = useState("");
@@ -148,6 +164,7 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
             { id: "teachers", label: "Teachers & Assignments", icon: Users },
             { id: "classes", label: "Classes & Streams", icon: Layers },
             { id: "moderation", label: "Results Moderation", icon: FileCheck },
+            { id: "attendance", label: "Attendance Register", icon: Calendar },
             { id: "reports", label: "Reports & Bulk Print", icon: Printer },
             { id: "wizard", label: "Setup Wizard", icon: Wand2 },
           ].map((tab) => {
@@ -170,13 +187,22 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
           })}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {onOpenExportCenter && (
+            <button
+              onClick={onOpenExportCenter}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition-colors"
+            >
+              <Download className="w-3.5 h-3.5 text-indigo-700" />
+              Export Center
+            </button>
+          )}
           <button
             onClick={onOpenImportCenter}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition-colors"
           >
             <Upload className="w-3.5 h-3.5 text-slate-500" />
-            Excel Import Center
+            Import Center
           </button>
           <button
             onClick={() => setShowAddStudentModal(true)}
@@ -492,7 +518,64 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
               </button>
             </div>
           </div>
+
+          {/* Section 24: Formal Score Correction Requests */}
+          {correctionRequests && correctionRequests.length > 0 && (
+            <div className="border border-amber-200 rounded-lg p-4 bg-amber-50/50 space-y-3">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-700" />
+                <h4 className="font-bold text-amber-950 text-xs uppercase tracking-wider">
+                  Pending Score Correction Requests (Section 24)
+                </h4>
+              </div>
+              <div className="space-y-2">
+                {correctionRequests.map((req) => (
+                  <div
+                    key={req.id}
+                    className="p-3 bg-white border border-amber-200 rounded-lg text-xs flex justify-between items-center"
+                  >
+                    <div>
+                      <div className="font-bold text-slate-900">
+                        Correction for Component: {req.componentId}
+                      </div>
+                      <div className="text-slate-600 mt-0.5">
+                        Old Score: <span className="font-mono font-bold line-through text-slate-400">{req.oldValue}</span> → Proposed: <span className="font-mono font-bold text-emerald-700">{req.proposedValue}</span>
+                      </div>
+                      <div className="text-slate-500 italic mt-0.5">
+                        Reason: "{req.reason}" — Requested by: {req.requestedBy}
+                      </div>
+                    </div>
+                    {onApproveCorrection && req.status === "PENDING" && (
+                      <button
+                        onClick={() => onApproveCorrection(req.id)}
+                        className="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white rounded text-xs font-semibold inline-flex items-center gap-1 shadow-sm"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        Authorize & Re-Version
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
+      )}
+
+      {/* ====================================================================== */}
+      {/* 6.5 TAB: ATTENDANCE REGISTER (SECTION 35) */}
+      {/* ====================================================================== */}
+      {activeTab === "attendance" && (
+        <AttendanceModule
+          students={students}
+          classes={classes}
+          streams={streams}
+          academicYearLabel={academicYears.find((y) => y.isCurrent)?.yearLabel || "2026/2027"}
+          termName={terms.find((t) => t.isCurrent)?.termName || "Term 1"}
+          onSaveAttendance={(records) => {
+            if (onSaveAttendance) onSaveAttendance(records);
+          }}
+        />
       )}
 
       {/* ====================================================================== */}
@@ -510,13 +593,24 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
               </p>
             </div>
 
-            <button
-              onClick={() => onPublishReports("CLS_JHS1")}
-              className="px-3.5 py-2 bg-indigo-700 hover:bg-indigo-800 text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              Publish All JHS 1 Reports
-            </button>
+            <div className="flex items-center gap-2">
+              {onOpenBulkPrint && (
+                <button
+                  onClick={() => onOpenBulkPrint("CLS_JHS1")}
+                  className="px-3.5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs"
+                >
+                  <Printer className="w-4 h-4 text-indigo-700" />
+                  Bulk Print Class Reports
+                </button>
+              )}
+              <button
+                onClick={() => onPublishReports("CLS_JHS1")}
+                className="px-3.5 py-2 bg-indigo-700 hover:bg-indigo-800 text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Publish All JHS 1 Reports
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
