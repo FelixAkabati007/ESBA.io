@@ -32,12 +32,16 @@ interface MainHomePageProps {
   onSelectRole: (role: UserRole) => void;
   onOpenVerifier: () => void;
   onOpenRegister: () => void;
+  onOpenSignIn?: (role?: UserRole) => void;
+  onOpenLegal?: (type: "PRIVACY" | "TERMS") => void;
 }
 
 export const MainHomePage: React.FC<MainHomePageProps> = ({
   onSelectRole,
   onOpenVerifier,
   onOpenRegister,
+  onOpenSignIn,
+  onOpenLegal,
 }) => {
   const [inlineVerifyCode, setInlineVerifyCode] = useState("ESBA-2026-9F72A81");
   const [showInlineVerifier, setShowInlineVerifier] = useState(false);
@@ -82,26 +86,33 @@ export const MainHomePage: React.FC<MainHomePageProps> = ({
           {/* Quick CTA buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
-              onClick={() => onSelectRole("SCHOOL_ADMIN")}
-              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30 transition-all inline-flex items-center gap-2"
+              onClick={() => (onOpenSignIn ? onOpenSignIn("SCHOOL_ADMIN") : onSelectRole("SCHOOL_ADMIN"))}
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <GraduationCap className="w-4 h-4" />
-              Enter School Admin Portal
+              <span>Enter School Admin Portal</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
-              onClick={() => onSelectRole("TEACHER")}
-              className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-sm font-semibold transition-all inline-flex items-center gap-2"
+              onClick={() => (onOpenSignIn ? onOpenSignIn("TEACHER") : onSelectRole("TEACHER"))}
+              className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-sm font-semibold transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-emerald-400" />
-              Teacher Score Entry
+              <span>Teacher Score Entry</span>
+            </button>
+            <button
+              onClick={onOpenRegister}
+              className="px-5 py-3 bg-indigo-950/80 hover:bg-indigo-900/90 text-indigo-300 border border-indigo-700/60 rounded-xl text-sm font-semibold transition-all inline-flex items-center gap-2 cursor-pointer"
+            >
+              <Building2 className="w-4 h-4 text-indigo-400" />
+              <span>Register Basic School</span>
             </button>
             <button
               onClick={onOpenVerifier}
-              className="px-5 py-3 bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-sm font-medium transition-all inline-flex items-center gap-2"
+              className="px-5 py-3 bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-sm font-medium transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <ShieldCheck className="w-4 h-4 text-amber-400" />
-              Verify Report Card
+              <span>Verify Report Card</span>
             </button>
           </div>
 
@@ -429,9 +440,28 @@ export const MainHomePage: React.FC<MainHomePageProps> = ({
             <span>• Pre-Tertiary School-Based Assessment SaaS</span>
           </div>
 
-          <div className="text-center md:text-right">
-            <span>Compliant with Ghana Education Service (GES) & NaCCA standards</span>
-            <div className="text-[10px] text-slate-600 mt-0.5">
+          <div className="text-center md:text-right space-y-1">
+            <div>
+              Compliant with Ghana Education Service (GES) & NaCCA standards •{" "}
+              {onOpenLegal && (
+                <>
+                  <button
+                    onClick={() => onOpenLegal("PRIVACY")}
+                    className="hover:text-indigo-400 hover:underline"
+                  >
+                    Privacy Policy
+                  </button>{" "}
+                  ·{" "}
+                  <button
+                    onClick={() => onOpenLegal("TERMS")}
+                    className="hover:text-indigo-400 hover:underline"
+                  >
+                    Terms of Service
+                  </button>
+                </>
+              )}
+            </div>
+            <div className="text-[10px] text-slate-600">
               Multi-tenant architecture powered by PostgreSQL Row Level Security (RLS)
             </div>
           </div>

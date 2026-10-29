@@ -52,6 +52,9 @@ import { ImportCenter } from "./components/imports/ImportCenter";
 import { ExportCenter } from "./components/exports/ExportCenter";
 import { ScoreCorrectionModal } from "./components/corrections/ScoreCorrectionModal";
 import { PasswordRecoveryModal } from "./components/auth/PasswordRecoveryModal";
+import { SignInModal } from "./components/auth/SignInModal";
+import { SchoolRegistrationModal } from "./components/auth/SchoolRegistrationModal";
+import { LegalModal } from "./components/legal/LegalModal";
 import { ShieldCheck, ArrowLeft, X } from "lucide-react";
 
 export default function App() {
@@ -80,6 +83,11 @@ export default function App() {
   const [showImportCenter, setShowImportCenter] = useState(false);
   const [showExportCenter, setShowExportCenter] = useState(false);
   const [showPasswordRecovery, setShowPasswordRecovery] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [showSchoolRegistration, setShowSchoolRegistration] = useState(false);
+  const [authTargetRole, setAuthTargetRole] = useState<UserRole>("SCHOOL_ADMIN");
+  const [activeLegalModal, setActiveLegalModal] = useState<"PRIVACY" | "TERMS" | null>(null);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string>("head@achimota-basic.edu.gh");
   const [activeCorrectionTarget, setActiveCorrectionTarget] = useState<{
     scoreRecord: AssessmentScoreRecord;
     student: StudentProfile;
@@ -365,6 +373,7 @@ export default function App() {
       <HeaderNavigation
         currentRole={currentRole}
         currentView={currentView}
+        activeSchoolName={currentSchool.name}
         onRoleChange={(role) => {
           setCurrentRole(role);
           setCurrentView("PORTAL");
@@ -374,6 +383,11 @@ export default function App() {
         onNavigateHome={() => setCurrentView("HOME")}
         onOpenVerifier={() => setShowPublicVerifier(true)}
         onOpenPasswordRecovery={() => setShowPasswordRecovery(true)}
+        onOpenSignIn={(role) => {
+          setAuthTargetRole(role || currentRole || "SCHOOL_ADMIN");
+          setShowSignInModal(true);
+        }}
+        onOpenRegisterSchool={() => setShowSchoolRegistration(true)}
       />
 
       {/* 2. Main Content Area: Home Landing Page OR Role Portal */}
@@ -384,10 +398,12 @@ export default function App() {
             setCurrentView("PORTAL");
           }}
           onOpenVerifier={() => setShowPublicVerifier(true)}
-          onOpenRegister={() => {
-            setCurrentRole("SCHOOL_ADMIN");
-            setCurrentView("PORTAL");
+          onOpenRegister={() => setShowSchoolRegistration(true)}
+          onOpenSignIn={(role) => {
+            setAuthTargetRole(role || "SCHOOL_ADMIN");
+            setShowSignInModal(true);
           }}
+          onOpenLegal={(type) => setActiveLegalModal(type)}
         />
       ) : (
         <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
@@ -572,6 +588,57 @@ export default function App() {
       {/* 9. Password Recovery Modal (Section 33) */}
       {showPasswordRecovery && (
         <PasswordRecoveryModal onClose={() => setShowPasswordRecovery(false)} />
+      )}
+
+      {/* 10. Commercial Sign-In & Role Authentication Modal */}
+      {showSignInModal && (
+        <SignInModal
+          isOpen={showSignInModal}
+          initialRole={authTargetRole}
+          onClose={() => setShowSignInModal(false)}
+          onSuccess={(role, email) => {
+            setCurrentRole(role);
+            setCurrentUserEmail(email);
+            setShowSignInModal(false);
+            setCurrentView("PORTAL");
+          }}
+          onOpenForgotPassword={() => {
+            setShowSignInModal(false);
+            setShowPasswordRecovery(true);
+          }}
+          onOpenRegisterSchool={() => {
+            setShowSignInModal(false);
+            setShowSchoolRegistration(true);
+          }}
+          onOpenLegal={(type) => setActiveLegalModal(type)}
+        />
+      )}
+
+      {/* 11. School Onboarding & Registration Modal */}
+      {showSchoolRegistration && (
+        <SchoolRegistrationModal
+          isOpen={showSchoolRegistration}
+          onClose={() => setShowSchoolRegistration(false)}
+          onRegisterSuccess={(newSchoolData, adminEmail) => {
+            handleAddSchool(newSchoolData);
+            setCurrentRole("SCHOOL_ADMIN");
+            setCurrentUserEmail(adminEmail);
+            setShowSchoolRegistration(false);
+            setCurrentView("PORTAL");
+          }}
+          onSwitchToLogin={() => {
+            setShowSchoolRegistration(false);
+            setShowSignInModal(true);
+          }}
+        />
+      )}
+
+      {/* 12. Legal Terms & Privacy Modal */}
+      {activeLegalModal && (
+        <LegalModal
+          type={activeLegalModal}
+          onClose={() => setActiveLegalModal(null)}
+        />
       )}
     </div>
   );
