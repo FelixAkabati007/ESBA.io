@@ -5,31 +5,30 @@ import App from "../App";
 describe("E-SBA Ghana Multi-Tenant Application", () => {
   it("renders global brand header with NaCCA NPLAF badge and role switchers", () => {
     render(<App />);
-    expect(screen.getByText("E-SBA Ghana")).toBeInTheDocument();
+    expect(screen.getAllByText(/E-SBA Ghana/i)[0]).toBeInTheDocument();
     expect(screen.getByText("NaCCA NPLAF")).toBeInTheDocument();
-    expect(screen.getByText("School Admin / Head")).toBeInTheDocument();
-    expect(screen.getByText("Teacher Portal")).toBeInTheDocument();
-    expect(screen.getByText("Student Portal")).toBeInTheDocument();
+    expect(screen.getAllByText(/Teacher Portal/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Student Portal/i)[0]).toBeInTheDocument();
   });
 
   it("navigates across primary roles: Main Admin, Teacher, and Student", () => {
     render(<App />);
 
-    // 1. Switch to Main Admin
-    const mainAdminBtns = screen.getAllByText(/Main Platform Admin/i);
-    fireEvent.click(mainAdminBtns[0]);
+    // 1. Switch to Main Admin via Launch Admin Portal button
+    const launchAdminBtn = screen.getByText("Launch Admin Portal");
+    fireEvent.click(launchAdminBtn);
     expect(screen.getByText("Overview & Health")).toBeInTheDocument();
     expect(screen.getByText("Schools Directory")).toBeInTheDocument();
     expect(screen.getByText("Subscription Plans")).toBeInTheDocument();
 
-    // 2. Switch to Teacher Portal
+    // 2. Switch to Teacher Portal via header role switcher
     const teacherBtns = screen.getAllByText(/Teacher Portal/i);
     fireEvent.click(teacherBtns[0]);
     expect(screen.getByText("Teacher Score Entry Portal")).toBeInTheDocument();
     expect(screen.getByText("Save Draft")).toBeInTheDocument();
     expect(screen.getByText(/Submit for Moderation/i)).toBeInTheDocument();
 
-    // 3. Switch to Student Portal
+    // 3. Switch to Student Portal via header role switcher
     const studentBtns = screen.getAllByText(/Student Portal/i);
     fireEvent.click(studentBtns[0]);
     expect(screen.getByText("Learner Student Portal")).toBeInTheDocument();

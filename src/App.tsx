@@ -39,6 +39,7 @@ import {
   DEFAULT_NINE_POINT_GRADING_SCALE,
   calculateAssessmentScores,
 } from "./services/assessmentCalculator";
+import { MainHomePage } from "./components/home/MainHomePage";
 import { HeaderNavigation } from "./components/common/HeaderNavigation";
 import { MainAdminDashboard } from "./components/admin/MainAdminDashboard";
 import { SchoolAdminDashboard } from "./components/school/SchoolAdminDashboard";
@@ -54,7 +55,8 @@ import { PasswordRecoveryModal } from "./components/auth/PasswordRecoveryModal";
 import { ShieldCheck, ArrowLeft, X } from "lucide-react";
 
 export default function App() {
-  // Current active role
+  // Navigation View & Role State
+  const [currentView, setCurrentView] = useState<"HOME" | "PORTAL">("HOME");
   const [currentRole, setCurrentRole] = useState<UserRole>("SCHOOL_ADMIN");
 
   // Master State
@@ -289,7 +291,6 @@ export default function App() {
     const targetReq = correctionRequests.find((r) => r.id === requestId);
     if (!targetReq) return;
 
-    // 1. Update the score record
     setScores((prev) =>
       prev.map((s) => {
         if (s.id === targetReq.scoreRecordId || (s.studentId === targetReq.studentId && s.subjectId === targetReq.subjectId)) {
@@ -326,7 +327,6 @@ export default function App() {
       })
     );
 
-    // 2. Mark correction approved
     setCorrectionRequests((prev) =>
       prev.map((r) =>
         r.id === requestId
@@ -335,14 +335,13 @@ export default function App() {
       )
     );
 
-    // 3. Invalidate previous digital signature and bump report version (Section 27)
     setReports((prev) =>
       prev.map((rep) =>
         rep.studentId === targetReq.studentId
           ? {
               ...rep,
               version: rep.version + 1,
-              headTeacherSigned: false, // requires re-signing
+              headTeacherSigned: false,
               classTeacherSigned: false,
               resultHash: `amended_hash_${Date.now()}`,
               updatedAt: new Date().toISOString(),
@@ -365,93 +364,110 @@ export default function App() {
       {/* 1. Global Navigation Bar */}
       <HeaderNavigation
         currentRole={currentRole}
+        currentView={currentView}
         onRoleChange={(role) => {
           setCurrentRole(role);
+          setCurrentView("PORTAL");
           setSelectedStudentForReport(null);
           setShowBulkPrintClassId(null);
         }}
+        onNavigateHome={() => setCurrentView("HOME")}
         onOpenVerifier={() => setShowPublicVerifier(true)}
         onOpenPasswordRecovery={() => setShowPasswordRecovery(true)}
       />
 
-      {/* 2. Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Render View based on Active User Role */}
-        {currentRole === "MAIN_ADMIN" && (
-          <MainAdminDashboard
-            schools={schools}
-            plans={plans}
-            subscriptions={subscriptions}
-            exceptions={exceptions}
-            auditLogs={auditLogs}
-            templates={templates}
-            onAddSchool={handleAddSchool}
-            onGrantException={handleGrantException}
-            onUpdateTemplate={(tpl) => setTemplates([tpl])}
-          />
-        )}
+      {/* 2. Main Content Area: Home Landing Page OR Role Portal */}
+      {currentView === "HOME" ? (
+        <MainHomePage
+          onSelectRole={(role) => {
+            setCurrentRole(role);
+            setCurrentView("PORTAL");
+          }}
+          onOpenVerifier={() => setShowPublicVerifier(true)}
+          onOpenRegister={() => {
+            setCurrentRole("SCHOOL_ADMIN");
+            setCurrentView("PORTAL");
+          }}
+        />
+      ) : (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+          {/* Render View based on Active User Role */}
+          {currentRole === "MAIN_ADMIN" && (
+            <MainAdminDashboard
+              schools={schools}
+              plans={plans}
+              subscriptions={subscriptions}
+              exceptions={exceptions}
+              auditLogs={auditLogs}
+              templates={templates}
+              onAddSchool={handleAddSchool}
+              onGrantException={handleGrantException}
+              onUpdateTemplate={(tpl) => setTemplates([tpl])}
+            />
+          )}
 
-        {currentRole === "SCHOOL_ADMIN" && (
-          <SchoolAdminDashboard
-            school={currentSchool}
-            students={students}
-            teachers={teachers}
-            classes={DEMO_CLASSES}
-            streams={DEMO_STREAMS}
-            subjects={DEMO_SUBJECTS}
-            assignments={DEMO_TEACHER_ASSIGNMENTS}
-            academicYears={DEMO_ACADEMIC_YEARS}
-            terms={DEMO_TERMS}
-            scoreRecords={scores}
-            reportCards={reports}
-            correctionRequests={correctionRequests}
-            attendanceRecords={attendance}
-            onAddStudent={handleAddStudent}
-            onAddTeacher={(tch) => {}}
-            onApproveResults={handleApproveResults}
-            onPublishReports={handlePublishReports}
-            onOpenImportCenter={() => setShowImportCenter(true)}
-            onOpenExportCenter={() => setShowExportCenter(true)}
-            onOpenReportCard={(st) => setSelectedStudentForReport(st)}
-            onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
-            onSaveAttendance={handleSaveAttendance}
-            onApproveCorrection={handleApproveCorrection}
-          />
-        )}
+          {currentRole === "SCHOOL_ADMIN" && (
+            <SchoolAdminDashboard
+              school={currentSchool}
+              students={students}
+              teachers={teachers}
+              classes={DEMO_CLASSES}
+              streams={DEMO_STREAMS}
+              subjects={DEMO_SUBJECTS}
+              assignments={DEMO_TEACHER_ASSIGNMENTS}
+              academicYears={DEMO_ACADEMIC_YEARS}
+              terms={DEMO_TERMS}
+              scoreRecords={scores}
+              reportCards={reports}
+              correctionRequests={correctionRequests}
+              attendanceRecords={attendance}
+              onAddStudent={handleAddStudent}
+              onAddTeacher={(tch) => {}}
+              onApproveResults={handleApproveResults}
+              onPublishReports={handlePublishReports}
+              onOpenImportCenter={() => setShowImportCenter(true)}
+              onOpenExportCenter={() => setShowExportCenter(true)}
+              onOpenReportCard={(st) => setSelectedStudentForReport(st)}
+              onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
+              onSaveAttendance={handleSaveAttendance}
+              onApproveCorrection={handleApproveCorrection}
+            />
+          )}
 
-        {currentRole === "TEACHER" && (
-          <TeacherPortal
-            teacherName="Mr. Kofi Mensah"
-            assignments={DEMO_TEACHER_ASSIGNMENTS}
-            subjects={DEMO_SUBJECTS}
-            classes={DEMO_CLASSES}
-            streams={DEMO_STREAMS}
-            students={students}
-            initialScores={scores}
-            onSaveScores={handleSaveScores}
-            onSubmitScores={handleSubmitScores}
-            onPreviewReport={(st) => setSelectedStudentForReport(st)}
-            onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
-            onOpenAttendance={() => setCurrentRole("SCHOOL_ADMIN")}
-            onOpenCorrectionModal={(rec, st) =>
-              setActiveCorrectionTarget({ scoreRecord: rec, student: st })
-            }
-          />
-        )}
+          {currentRole === "TEACHER" && (
+            <TeacherPortal
+              teacherName="Mr. Kofi Mensah"
+              assignments={DEMO_TEACHER_ASSIGNMENTS}
+              subjects={DEMO_SUBJECTS}
+              classes={DEMO_CLASSES}
+              streams={DEMO_STREAMS}
+              students={students}
+              initialScores={scores}
+              onSaveScores={handleSaveScores}
+              onSubmitScores={handleSubmitScores}
+              onPreviewReport={(st) => setSelectedStudentForReport(st)}
+              onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
+              onOpenAttendance={() => setCurrentRole("SCHOOL_ADMIN")}
+              onOpenCorrectionModal={(rec, st) =>
+                setActiveCorrectionTarget({ scoreRecord: rec, student: st })
+              }
+            />
+          )}
 
-        {currentRole === "STUDENT" && (
-          <StudentPortal
-            student={students[0]}
-            school={currentSchool}
-            academicYear={currentAcademicYear}
-            term={currentTerm}
-            reportCard={reports[0]}
-            scores={scores.filter((s) => s.studentId === students[0].id)}
-            subjects={DEMO_SUBJECTS}
-            onOpenReportCard={() => setSelectedStudentForReport(students[0])}
-          />
-        )}
-      </main>
+          {currentRole === "STUDENT" && (
+            <StudentPortal
+              student={students[0]}
+              school={currentSchool}
+              academicYear={currentAcademicYear}
+              term={currentTerm}
+              reportCard={reports[0]}
+              scores={scores.filter((s) => s.studentId === students[0].id)}
+              subjects={DEMO_SUBJECTS}
+              onOpenReportCard={() => setSelectedStudentForReport(students[0])}
+            />
+          )}
+        </main>
+      )}
 
       {/* 3. Official Individual Report Card Modal */}
       {selectedStudentForReport && !showBulkPrintClassId && (
