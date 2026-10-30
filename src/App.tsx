@@ -55,6 +55,7 @@ import { PasswordRecoveryModal } from "./components/auth/PasswordRecoveryModal";
 import { SignInModal } from "./components/auth/SignInModal";
 import { SchoolRegistrationModal } from "./components/auth/SchoolRegistrationModal";
 import { LegalModal } from "./components/legal/LegalModal";
+import { ToastProvider } from "./context/ToastContext";
 import { ShieldCheck, ArrowLeft, X } from "lucide-react";
 
 export default function App() {
@@ -368,7 +369,8 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
+    <ToastProvider>
+      <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
       {/* 1. Global Navigation Bar */}
       <HeaderNavigation
         currentRole={currentRole}
@@ -640,6 +642,7 @@ export default function App() {
           onClose={() => setActiveLegalModal(null)}
         />
       )}
-    </div>
+      </div>
+    </ToastProvider>
   );
 }

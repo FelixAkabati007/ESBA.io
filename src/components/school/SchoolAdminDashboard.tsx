@@ -36,9 +36,11 @@ import {
   ShieldCheck,
   Wand2,
   AlertCircle,
+  FileSpreadsheet,
 } from "lucide-react";
 import { formatOrdinalPosition } from "../../services/assessmentCalculator";
 import { AttendanceModule } from "../attendance/AttendanceModule";
+import { BroadsheetMatrix } from "./BroadsheetMatrix";
 import { CorrectionRequest, AttendanceRecord } from "../../types";
 
 interface SchoolAdminDashboardProps {
@@ -93,7 +95,7 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
   onApproveCorrection,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "students" | "teachers" | "classes" | "moderation" | "attendance" | "reports" | "wizard"
+    "overview" | "students" | "teachers" | "classes" | "broadsheet" | "moderation" | "attendance" | "reports" | "wizard"
   >("overview");
 
   const [studentSearch, setStudentSearch] = useState("");
@@ -163,6 +165,7 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
             { id: "students", label: "Learners / Students", icon: Users },
             { id: "teachers", label: "Teachers & Assignments", icon: Users },
             { id: "classes", label: "Classes & Streams", icon: Layers },
+            { id: "broadsheet", label: "Class Broadsheet", icon: FileSpreadsheet },
             { id: "moderation", label: "Results Moderation", icon: FileCheck },
             { id: "attendance", label: "Attendance Register", icon: Calendar },
             { id: "reports", label: "Reports & Bulk Print", icon: Printer },
@@ -479,6 +482,23 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
             })}
           </div>
         </div>
+      )}
+
+      {/* ====================================================================== */}
+      {/* 5B. TAB: CLASS BROADSHEET MATRIX */}
+      {/* ====================================================================== */}
+      {activeTab === "broadsheet" && (
+        <BroadsheetMatrix
+          school={school}
+          academicYear={academicYears.find((y) => y.isCurrent) || academicYears[0]}
+          term={terms.find((t) => t.isCurrent) || terms[0]}
+          classes={classes as any}
+          streams={streams}
+          subjects={subjects}
+          students={students}
+          scoreRecords={scoreRecords}
+          onOpenReportCard={onOpenReportCard}
+        />
       )}
 
       {/* ====================================================================== */}
