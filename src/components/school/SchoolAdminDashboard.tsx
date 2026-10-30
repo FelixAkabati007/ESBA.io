@@ -67,6 +67,8 @@ interface SchoolAdminDashboardProps {
   onOpenBulkPrint?: (classId: string) => void;
   onSaveAttendance?: (records: AttendanceRecord[]) => void;
   onApproveCorrection?: (requestId: string) => void;
+  controlledTab?: string;
+  onTabChange?: (tab: any) => void;
 }
 
 export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
@@ -93,10 +95,18 @@ export const SchoolAdminDashboard: React.FC<SchoolAdminDashboardProps> = ({
   onOpenBulkPrint,
   onSaveAttendance,
   onApproveCorrection,
+  controlledTab,
+  onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState<
+  const [internalTab, setInternalTab] = useState<
     "overview" | "students" | "teachers" | "classes" | "broadsheet" | "moderation" | "attendance" | "reports" | "wizard"
   >("overview");
+
+  const activeTab = (controlledTab as any) || internalTab;
+  const setActiveTab = (tab: any) => {
+    setInternalTab(tab);
+    onTabChange?.(tab);
+  };
 
   const [studentSearch, setStudentSearch] = useState("");
   const [selectedClassFilter, setSelectedClassFilter] = useState<string>("ALL");

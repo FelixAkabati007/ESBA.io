@@ -39,6 +39,8 @@ interface MainAdminDashboardProps {
   onAddSchool: (school: Partial<School>) => void;
   onGrantException: (schoolId: string, exception: Partial<SubscriptionException>) => void;
   onUpdateTemplate: (template: AssessmentTemplate) => void;
+  controlledTab?: string;
+  onTabChange?: (tab: any) => void;
 }
 
 export const MainAdminDashboard: React.FC<MainAdminDashboardProps> = ({
@@ -51,10 +53,18 @@ export const MainAdminDashboard: React.FC<MainAdminDashboardProps> = ({
   onAddSchool,
   onGrantException,
   onUpdateTemplate,
+  controlledTab,
+  onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState<
+  const [internalTab, setInternalTab] = useState<
     "overview" | "schools" | "plans" | "exceptions" | "curriculum" | "audit"
   >("overview");
+
+  const activeTab = (controlledTab as any) || internalTab;
+  const setActiveTab = (tab: any) => {
+    setInternalTab(tab);
+    onTabChange?.(tab);
+  };
 
   const [schoolSearch, setSchoolSearch] = useState("");
   const [showAddSchoolModal, setShowAddSchoolModal] = useState(false);

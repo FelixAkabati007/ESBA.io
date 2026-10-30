@@ -17,20 +17,24 @@ describe("E-SBA Ghana Multi-Tenant Application", () => {
     // 1. Switch to Main Admin via Launch Admin Portal button
     const launchAdminBtn = screen.getByText("Launch Admin Portal");
     fireEvent.click(launchAdminBtn);
-    expect(screen.getByText("Overview & Health")).toBeInTheDocument();
-    expect(screen.getByText("Schools Directory")).toBeInTheDocument();
-    expect(screen.getByText("Subscription Plans")).toBeInTheDocument();
+    expect(screen.getAllByText("Overview & Health")[0]).toBeInTheDocument();
+    expect(screen.getAllByText("Schools Directory")[0]).toBeInTheDocument();
+    expect(screen.getAllByText("Subscription Plans")[0]).toBeInTheDocument();
 
-    // 2. Switch to Teacher Portal via header role switcher
-    const teacherBtns = screen.getAllByText(/Teacher Portal/i);
-    fireEvent.click(teacherBtns[0]);
+    // 2. Open user menu and switch to Teacher Portal
+    const userMenuBtn = screen.getByLabelText("User Account Menu");
+    fireEvent.click(userMenuBtn);
+    const teacherBtn = screen.getByRole("button", { name: /Teacher Portal/i });
+    fireEvent.click(teacherBtn);
     expect(screen.getByText("Teacher Score Entry Portal")).toBeInTheDocument();
     expect(screen.getByText("Save Draft")).toBeInTheDocument();
     expect(screen.getByText(/Submit for Moderation/i)).toBeInTheDocument();
 
-    // 3. Switch to Student Portal via header role switcher
-    const studentBtns = screen.getAllByText(/Student Portal/i);
-    fireEvent.click(studentBtns[0]);
+    // 3. Open user menu and switch to Student Portal
+    const userMenuBtn2 = screen.getByLabelText("User Account Menu");
+    fireEvent.click(userMenuBtn2);
+    const studentBtn = screen.getByRole("button", { name: /Student Portal/i });
+    fireEvent.click(studentBtn);
     expect(screen.getByText("Learner Student Portal")).toBeInTheDocument();
     expect(screen.getByText(/Current Term Results/i)).toBeInTheDocument();
   });

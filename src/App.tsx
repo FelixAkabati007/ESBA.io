@@ -55,6 +55,8 @@ import { PasswordRecoveryModal } from "./components/auth/PasswordRecoveryModal";
 import { SignInModal } from "./components/auth/SignInModal";
 import { SchoolRegistrationModal } from "./components/auth/SchoolRegistrationModal";
 import { LegalModal } from "./components/legal/LegalModal";
+import { AppShell } from "./components/layout/AppShell";
+import { BroadsheetMatrix } from "./components/school/BroadsheetMatrix";
 import { ToastProvider } from "./context/ToastContext";
 import { ShieldCheck, ArrowLeft, X } from "lucide-react";
 
@@ -62,6 +64,7 @@ export default function App() {
   // Navigation View & Role State
   const [currentView, setCurrentView] = useState<"HOME" | "PORTAL">("HOME");
   const [currentRole, setCurrentRole] = useState<UserRole>("SCHOOL_ADMIN");
+  const [activeSidebarTab, setActiveSidebarTab] = useState("overview");
 
   // Master State
   const [schools, setSchools] = useState<School[]>([DEMO_SCHOOL]);
@@ -371,47 +374,95 @@ export default function App() {
   return (
     <ToastProvider>
       <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
-      {/* 1. Global Navigation Bar */}
-      <HeaderNavigation
-        currentRole={currentRole}
-        currentView={currentView}
-        activeSchoolName={currentSchool.name}
-        onRoleChange={(role) => {
-          setCurrentRole(role);
-          setCurrentView("PORTAL");
-          setSelectedStudentForReport(null);
-          setShowBulkPrintClassId(null);
-        }}
-        onNavigateHome={() => setCurrentView("HOME")}
-        onOpenVerifier={() => setShowPublicVerifier(true)}
-        onOpenPasswordRecovery={() => setShowPasswordRecovery(true)}
-        onOpenSignIn={(role) => {
-          setAuthTargetRole(role || currentRole || "SCHOOL_ADMIN");
-          setShowSignInModal(true);
-        }}
-        onOpenRegisterSchool={() => setShowSchoolRegistration(true)}
-      />
-
-      {/* 2. Main Content Area: Home Landing Page OR Role Portal */}
+      {/* Main View Switcher: Public Homepage OR Enterprise AppShell */}
       {currentView === "HOME" ? (
-        <MainHomePage
-          onSelectRole={(role) => {
-            setCurrentRole(role);
-            setCurrentView("PORTAL");
-          }}
-          onOpenVerifier={() => setShowPublicVerifier(true)}
-          onOpenRegister={() => setShowSchoolRegistration(true)}
-          onOpenSignIn={(role) => {
-            setAuthTargetRole(role || "SCHOOL_ADMIN");
-            setShowSignInModal(true);
-          }}
-          onOpenLegal={(type) => setActiveLegalModal(type)}
-        />
+        <>
+          {/* 1. Public Header Navigation */}
+          <HeaderNavigation
+            currentRole={currentRole}
+            currentView={currentView}
+            activeSchoolName={currentSchool.name}
+            onRoleChange={(role) => {
+              setCurrentRole(role);
+              setActiveSidebarTab(role === "TEACHER" ? "marks" : "overview");
+              setCurrentView("PORTAL");
+              setSelectedStudentForReport(null);
+              setShowBulkPrintClassId(null);
+            }}
+            onNavigateHome={() => setCurrentView("HOME")}
+            onOpenVerifier={() => setShowPublicVerifier(true)}
+            onOpenPasswordRecovery={() => setShowPasswordRecovery(true)}
+            onOpenSignIn={(role) => {
+              setAuthTargetRole(role || currentRole || "SCHOOL_ADMIN");
+              setShowSignInModal(true);
+            }}
+            onOpenRegisterSchool={() => setShowSchoolRegistration(true)}
+          />
+
+          {/* 2. Commercial Landing Page */}
+          <MainHomePage
+            onSelectRole={(role) => {
+              setCurrentRole(role);
+              setActiveSidebarTab(role === "TEACHER" ? "marks" : "overview");
+              setCurrentView("PORTAL");
+            }}
+            onOpenVerifier={() => setShowPublicVerifier(true)}
+            onOpenRegister={() => setShowSchoolRegistration(true)}
+            onOpenSignIn={(role) => {
+              setAuthTargetRole(role || "SCHOOL_ADMIN");
+              setShowSignInModal(true);
+            }}
+            onOpenLegal={(type) => setActiveLegalModal(type)}
+          />
+        </>
       ) : (
-        <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-          {/* Render View based on Active User Role */}
+        /* 3. Enterprise AppShell Layout */
+        <AppShell
+          currentRole={currentRole}
+          schoolName={currentSchool.name}
+          schoolDistrict={currentSchool.district}
+          activeTab={activeSidebarTab}
+          activeViewLabel={
+            activeSidebarTab === "broadsheet"
+              ? "Class Broadsheet"
+              : activeSidebarTab === "students"
+              ? "Learners / Students"
+              : activeSidebarTab === "teachers"
+              ? "Teaching Staff"
+              : activeSidebarTab === "moderation"
+              ? "Results Moderation"
+              : activeSidebarTab === "attendance"
+              ? "Attendance Roll"
+              : activeSidebarTab === "reports"
+              ? "Report Cards"
+              : activeSidebarTab === "wizard"
+              ? "Setup Wizard"
+              : activeSidebarTab === "marks"
+              ? "Score Entry"
+              : activeSidebarTab === "plans"
+              ? "Subscription Plans"
+              : activeSidebarTab === "schools"
+              ? "Schools Directory"
+              : "Overview"
+          }
+          academicYearLabel={currentAcademicYear.yearLabel}
+          termLabel={currentTerm.termName}
+          onSelectTab={(tabId) => setActiveSidebarTab(tabId)}
+          onRoleChange={(role) => {
+            setCurrentRole(role);
+            setActiveSidebarTab(role === "TEACHER" ? "marks" : "overview");
+          }}
+          onNavigateHome={() => setCurrentView("HOME")}
+          onOpenVerifier={() => setShowPublicVerifier(true)}
+          onOpenPasswordRecovery={() => setShowPasswordRecovery(true)}
+          onOpenImportCenter={() => setShowImportCenter(true)}
+          onOpenExportCenter={() => setShowExportCenter(true)}
+        >
+          {/* Render Active View based on Active Role */}
           {currentRole === "MAIN_ADMIN" && (
             <MainAdminDashboard
+              controlledTab={activeSidebarTab}
+              onTabChange={setActiveSidebarTab}
               schools={schools}
               plans={plans}
               subscriptions={subscriptions}
@@ -425,66 +476,100 @@ export default function App() {
           )}
 
           {currentRole === "SCHOOL_ADMIN" && (
-            <SchoolAdminDashboard
-              school={currentSchool}
-              students={students}
-              teachers={teachers}
-              classes={DEMO_CLASSES}
-              streams={DEMO_STREAMS}
-              subjects={DEMO_SUBJECTS}
-              assignments={DEMO_TEACHER_ASSIGNMENTS}
-              academicYears={DEMO_ACADEMIC_YEARS}
-              terms={DEMO_TERMS}
-              scoreRecords={scores}
-              reportCards={reports}
-              correctionRequests={correctionRequests}
-              attendanceRecords={attendance}
-              onAddStudent={handleAddStudent}
-              onAddTeacher={(tch) => {}}
-              onApproveResults={handleApproveResults}
-              onPublishReports={handlePublishReports}
-              onOpenImportCenter={() => setShowImportCenter(true)}
-              onOpenExportCenter={() => setShowExportCenter(true)}
-              onOpenReportCard={(st) => setSelectedStudentForReport(st)}
-              onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
-              onSaveAttendance={handleSaveAttendance}
-              onApproveCorrection={handleApproveCorrection}
-            />
+            <>
+              {activeSidebarTab === "broadsheet" ? (
+                <BroadsheetMatrix
+                  school={currentSchool}
+                  academicYear={currentAcademicYear}
+                  term={currentTerm}
+                  classes={DEMO_CLASSES}
+                  streams={DEMO_STREAMS}
+                  subjects={DEMO_SUBJECTS}
+                  students={students}
+                  scoreRecords={scores}
+                  onOpenReportCard={(st) => setSelectedStudentForReport(st)}
+                />
+              ) : (
+                <SchoolAdminDashboard
+                  controlledTab={activeSidebarTab}
+                  onTabChange={setActiveSidebarTab}
+                  school={currentSchool}
+                  students={students}
+                  teachers={teachers}
+                  classes={DEMO_CLASSES}
+                  streams={DEMO_STREAMS}
+                  subjects={DEMO_SUBJECTS}
+                  assignments={DEMO_TEACHER_ASSIGNMENTS}
+                  academicYears={DEMO_ACADEMIC_YEARS}
+                  terms={DEMO_TERMS}
+                  scoreRecords={scores}
+                  reportCards={reports}
+                  correctionRequests={correctionRequests}
+                  attendanceRecords={attendance}
+                  onAddStudent={handleAddStudent}
+                  onAddTeacher={(tch) => {}}
+                  onApproveResults={handleApproveResults}
+                  onPublishReports={handlePublishReports}
+                  onOpenImportCenter={() => setShowImportCenter(true)}
+                  onOpenExportCenter={() => setShowExportCenter(true)}
+                  onOpenReportCard={(st) => setSelectedStudentForReport(st)}
+                  onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
+                  onSaveAttendance={handleSaveAttendance}
+                  onApproveCorrection={handleApproveCorrection}
+                />
+              )}
+            </>
           )}
 
           {currentRole === "TEACHER" && (
-            <TeacherPortal
-              teacherName="Mr. Kofi Mensah"
-              assignments={DEMO_TEACHER_ASSIGNMENTS}
-              subjects={DEMO_SUBJECTS}
-              classes={DEMO_CLASSES}
-              streams={DEMO_STREAMS}
-              students={students}
-              initialScores={scores}
-              onSaveScores={handleSaveScores}
-              onSubmitScores={handleSubmitScores}
-              onPreviewReport={(st) => setSelectedStudentForReport(st)}
-              onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
-              onOpenAttendance={() => setCurrentRole("SCHOOL_ADMIN")}
-              onOpenCorrectionModal={(rec, st) =>
-                setActiveCorrectionTarget({ scoreRecord: rec, student: st })
-              }
-            />
+            <>
+              {activeSidebarTab === "broadsheet" ? (
+                <BroadsheetMatrix
+                  school={currentSchool}
+                  academicYear={currentAcademicYear}
+                  term={currentTerm}
+                  classes={DEMO_CLASSES}
+                  streams={DEMO_STREAMS}
+                  subjects={DEMO_SUBJECTS}
+                  students={students}
+                  scoreRecords={scores}
+                  onOpenReportCard={(st) => setSelectedStudentForReport(st)}
+                />
+              ) : (
+                <TeacherPortal
+                  teacherName="Mr. Kofi Mensah"
+                  assignments={DEMO_TEACHER_ASSIGNMENTS}
+                  subjects={DEMO_SUBJECTS}
+                  classes={DEMO_CLASSES}
+                  streams={DEMO_STREAMS}
+                  students={students}
+                  initialScores={scores}
+                  onSaveScores={handleSaveScores}
+                  onSubmitScores={handleSubmitScores}
+                  onPreviewReport={(st) => setSelectedStudentForReport(st)}
+                  onOpenBulkPrint={(classId) => setShowBulkPrintClassId(classId)}
+                  onOpenAttendance={() => setActiveSidebarTab("attendance")}
+                  onOpenCorrectionModal={(rec, st) =>
+                    setActiveCorrectionTarget({ scoreRecord: rec, student: st })
+                  }
+                />
+              )}
+            </>
           )}
 
           {currentRole === "STUDENT" && (
             <StudentPortal
-              student={students[0]}
+              student={studentForReport}
               school={currentSchool}
               academicYear={currentAcademicYear}
               term={currentTerm}
-              reportCard={reports[0]}
-              scores={scores.filter((s) => s.studentId === students[0].id)}
+              reportCard={reportForSelectedStudent}
+              scores={scoresForSelectedStudent}
               subjects={DEMO_SUBJECTS}
-              onOpenReportCard={() => setSelectedStudentForReport(students[0])}
+              onOpenReportCard={() => setSelectedStudentForReport(studentForReport)}
             />
           )}
-        </main>
+        </AppShell>
       )}
 
       {/* 3. Official Individual Report Card Modal */}
